@@ -1,0 +1,118 @@
+.serif {
+  font-family: 'cambria math';
+}
+
+.tooltip > .tooltip-inner {
+  max-width: 400px;
+}
+
+.card.custom-class {
+  background-color: blueviolet;
+}
+
+.btndown {
+  margin: -0.5rem;
+  border: 0;
+  padding: 0rem 0.3rem;
+  font-size: 0.875rem;
+}
+
+div {
+  white-space: pre-wrap;
+}
+
+.container-fluid {
+  width: 100%;
+  padding-right: 1px;
+  padding-left: 1px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.btn-primary {
+  color: white !important;
+}
+
+.ht_master tr td {
+  background-color: white;
+  /* color: black; */
+}
+
+.handsontable table thead th {
+  /* background-color: white; */
+  /* color: black; */
+  font-weight: bold;
+  font-size: 16px;
+  white-space: pre-line;
+  max-width: 12; /* enter here your max header width */
+}
+
+.ag-header-cell-label .ag-header-cell-text {
+  white-space: pre-wrap !important;
+}
+
+.col-container {
+  display: table; /* Make the container element behave like a table */
+  width: 100%; /* Set full-width to expand the whole page */
+}
+
+.col {
+  display: table-cell; /* Make elements inside the container behave like table cells */
+}
+
+* {
+  border-radius: 0 !important;
+}
+
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:800);
+/* Main styles */
+.text--transparent {
+  fill: transparent;
+}
+.anim-shape {
+  -webkit-transform-origin: 0 150px;
+  -ms-transform-origin: 0 150px;
+  transform-origin: 0 150px;
+  -webkit-transform: scale(0, 1) translate(0, 0);
+  -ms-transform: scale(0, 1) translate(0, 0);
+  transform: scale(0, 1) translate(0, 0);
+  -webkit-animation: moving-panel 5s infinite alternate;
+  animation: moving-panel 5s infinite alternate;
+}
+.colortext .anim-shape:nth-child(1) {
+  fill: #51575e;
+}
+.colortext .anim-shape:nth-child(2) {
+  fill: #bfffec;
+}
+.colortext .anim-shape:nth-child(3) {
+  fill: #45bcf7;
+}
+.colortext .anim-shape:nth-child(4) {
+  fill: #eaebe8;
+}
+.colortext .anim-shape:nth-child(5) {
+  fill: #f6ffeb;
+}
+
+.anim-shape--shadow {
+  fill: #fff;
+  fill-opacity: 0;
+}
+
+@-webkit-keyframes moving-panel {
+  100% {
+    -webkit-transform: scale(1, 1) translate(20px, 0);
+    transform: scale(1, 1) translate(20px, 0);
+  }
+}
+@keyframes moving-panel {
+  100% {
+    -webkit-transform: scale(1, 1) translate(20px, 0);
+    transform: scale(1, 1) translate(20px, 0);
+  }
+}
+/* Other stuff */
+/* html, body {
+	 height: 100%;
+} */

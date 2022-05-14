@@ -1,4 +1,5 @@
-import { Form, Row, Col, FormControl, Button, Alert } from 'react-bootstrap';
+import { Form, Row, Col } from 'react-bootstrap';
+// import { Form, Row, Col, FormControl, Button, Alert } from 'react-bootstrap';
 import { useState } from 'react';
 // import Toggle from './ToggleRenderProps';
 import DropdownButton from 'react-bootstrap/DropdownButton';
@@ -32,7 +33,8 @@ export default function Andel() {
               <div class="p-3 mb-2 bg-white">
                 <Form>
                   <span class="lead text-muted">
-                    1 ANDEL{' '}
+                    1 ANDEL {seta}
+                    {setb}{' '}
                     <OverlayTrigger
                       placement="auto"
                       overlay={

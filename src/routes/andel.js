@@ -1,4 +1,4 @@
-import { Form, Row, Col } from 'react-bootstrap';
+import { Form, Row, Col, FormControl } from 'react-bootstrap';
 // import { Form, Row, Col, FormControl, Button, Alert } from 'react-bootstrap';
 import { useState } from 'react';
 // import Toggle from './ToggleRenderProps';
@@ -19,7 +19,8 @@ import InputGroup from 'react-bootstrap/InputGroup';
 
 export default function Andel() {
   var [a, seta] = useState(+(421).toFixed(2));
-  var [b, setb] = useState(+(421).toFixed(2));
+  var [b, setb] = useState(+(500).toFixed(2));
+  var [c, setc] = useState(+(85).toFixed(2));
   var [sig, setsig] = useState(['5% signifikansniveau']);
   var sigSelect = (e) => {
     setsig(e);
@@ -83,6 +84,153 @@ export default function Andel() {
                       </InputGroup>
                     </Col>
                   </Row>
+                  <br></br>
+                  <Row>
+                    <Col>
+                      {a > b && (
+                        <div class="alert alert-danger">
+                          <strong>Bemærk!</strong> Antallet af successer skal være mindre end stikprøvens størrelse.
+                        </div>
+                      )}
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      <Form.Text className="text-muted">Successer</Form.Text>
+                      <InputGroup size="sm">
+                        <OverlayTrigger
+                          placement="auto"
+                          delay={{
+                            show: 100,
+                            hide: 100,
+                          }}
+                          overlay={
+                            <Tooltip>
+                              {a} successer i en samlet stikprøve på {b}
+                              .<br />
+                            </Tooltip>
+                          }
+                        >
+                          <FormControl
+                            type="number"
+                            // max="-0.000000001"
+                            step={1}
+                            precision={0}
+                            //mobile={true}
+                            value={+a}
+                            onChange={(e) => seta(e.target.value)}
+                            placeholder="0"
+                          />
+                        </OverlayTrigger>
+                        {/* <InputGroup.Append>
+													<InputGroup.Text
+														inputGroup-sizing-sm
+														id="basic-addon2"
+													>
+														Successer
+													</InputGroup.Text>
+												</InputGroup.Append> */}
+                      </InputGroup>
+                    </Col>
+                    <br></br>
+                    <Col>
+                      <Form.Text className="text-muted">Stikprøvestørrelse</Form.Text>
+                      <InputGroup size="sm">
+                        <OverlayTrigger
+                          placement="auto"
+                          delay={{
+                            show: 100,
+                            hide: 100,
+                          }}
+                          overlay={<Tooltip>Den samlede stikprøvestørrelse er her {b}</Tooltip>}
+                        >
+                          <FormControl
+                            type="number"
+                            // max="-0.000000001"
+                            step={1}
+                            precision={0}
+                            //mobile={true}
+                            value={+b}
+                            onChange={(e) => setb(e.target.value)}
+                            placeholder="0"
+                          />
+                        </OverlayTrigger>
+                      </InputGroup>
+                    </Col>
+                  </Row>
+                  {c > 99.9999 && <br></br>}
+                  <Row>
+                    <Col>
+                      {c > 99.9999 && (
+                        <div class="alert alert-danger">
+                          <strong>Bemærk!</strong> Sandsynligheden skal være mindre en 100%
+                        </div>
+                      )}
+                    </Col>
+                  </Row>
+                  <Row>
+                    <Col>
+                      <Form.Text className="text-muted">Test af population andel p angivet i %</Form.Text>
+                      <InputGroup size="sm">
+                        <OverlayTrigger
+                          placement="auto"
+                          delay={{
+                            show: 100,
+                            hide: 100,
+                          }}
+                          overlay={
+                            <Tooltip>
+                              Du tester nu andel {c}%. Andelen skal være mellem 0% og 100%! .<br />
+                            </Tooltip>
+                          }
+                        >
+                          <FormControl
+                            type="number"
+                            // max="-0.000000001"
+                            step={1}
+                            precision={0}
+                            //mobile={true}
+                            value={+c}
+                            onChange={(e) => setc(e.target.value)}
+                            placeholder="0"
+                          />
+                        </OverlayTrigger>
+                      </InputGroup>
+                    </Col>
+                    <br></br>
+                    <Col></Col>
+                  </Row>
+                  <Row>
+                    {/* <Col class="col-6">
+                      <Form.Text className="text-muted">Test af population andel p angivet i %</Form.Text>
+                      <InputGroup size="sm">
+                        <OverlayTrigger
+                          placement="auto"
+                          delay={{
+                            show: 100,
+                            hide: 100,
+                          }}
+                          overlay={<Tooltip>Du tester nu andel {c}%. Andelen skal være mellem 0% og 100%!</Tooltip>}
+                        >
+                          <FormControl
+                            type="number"
+                            // max="-0.000000001"
+                            step={1}
+                            precision={0}
+                            //mobile={true}
+                            value={+c}
+                            onChange={(e) => setc(e.target.value)}
+                            placeholder="0"
+                          />
+                        </OverlayTrigger>
+                        <InputGroup.Append>
+                          <InputGroup.Text id="basic-addon2">%</InputGroup.Text>
+                        </InputGroup.Append>
+                      </InputGroup>
+                    </Col>
+                    <Col class="col-6"></Col> */}
+                  </Row>
+                  <hr></hr>
                 </Form>
               </div>
             </Container>

@@ -558,7 +558,7 @@ export default function Andel() {
                       overlay={
                         <Tooltip>
                           <p style={{ textAlign: 'left' }}>
-                            Vi benytter analyse af en andel, når vi har en kvalitativ binær variabel.<br></br>
+                            Vi benytter her analyse af en andel, når vi har en kvalitativ binær variabel.<br></br>
                             En kvalitativ binær variabel kan fx. være mænd og kvinder, tilfreds og utilfreds, variabelt
                             lån og fast lån etc.
                             <hr></hr>

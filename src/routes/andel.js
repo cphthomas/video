@@ -17,6 +17,7 @@ import { numberFormat4 } from './numbers'; //ændrer til komma og pct + DKK
 
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+require('highcharts/modules/annotations')(Highcharts);
 
 var cdf = require('@stdlib/stats-base-dists-normal-cdf');
 var pdf = require('@stdlib/stats/base/dists/normal/pdf');
@@ -398,6 +399,7 @@ export default function Andel() {
             fontSize: '0.6em',
           },
         },
+
         labels: [
           {
             point: {
@@ -445,6 +447,7 @@ export default function Andel() {
             backgroundColor: 'red',
             style: { color: 'white' },
           },
+
           {
             distance: 10,
             point: {
@@ -1112,6 +1115,7 @@ export default function Andel() {
                                           <BlockMath math={KIFormula3} /> */}
 
                                           <hr></hr>
+
                                           <HighchartsReact highcharts={Highcharts} options={options2} />
                                           <HighchartsReact highcharts={Highcharts} options={optionsop} />
                                           <HighchartsReact highcharts={Highcharts} options={optionsned} />
@@ -1162,7 +1166,7 @@ export default function Andel() {
                                     >
                                       <FormControl
                                         type="number"
-                                        // max="-0.000000001"
+                                        min="0.00000000"
                                         step={1}
                                         precision={0}
                                         //mobile={true}

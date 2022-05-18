@@ -17,6 +17,9 @@ import { numberFormat4 } from './numbers'; //ændrer til komma og pct + DKK
 
 import Highcharts from 'highcharts';
 import HighchartsReact from 'highcharts-react-official';
+
+import { MathJax, MathJaxContext } from 'better-react-mathjax';
+
 require('highcharts/modules/annotations')(Highcharts);
 
 var cdf = require('@stdlib/stats-base-dists-normal-cdf');
@@ -1263,6 +1266,16 @@ export default function Andel() {
                         </Col>
                       </div>
                     )}
+                  </Row>
+                  <Row>
+                    <div>
+                      <div>
+                        <MathJaxContext>
+                          <h2>Basic MathJax example with Latex</h2>
+                          <MathJax>{'\\(\\frac{10\\alpha}{4x} \\approx 2^{12}\\)'}</MathJax>
+                        </MathJaxContext>
+                      </div>
+                    </div>
                   </Row>
                 </Form>
               </div>

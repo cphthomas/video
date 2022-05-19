@@ -627,7 +627,7 @@ export default function Andel() {
                     <br></br>
                     <Row>
                       <Col>
-                        {a > b && (
+                        {+a > +b && (
                           <div class="alert alert-danger">
                             <strong>Bemærk!</strong> Antallet af successer skal være mindre end stikprøvens størrelse.
                           </div>
@@ -701,7 +701,7 @@ export default function Andel() {
                     {c > 99.9999 && <br></br>}
                     <Row>
                       <Col>
-                        {c > 99.9999 && (
+                        {+c > 99.9999 && (
                           <div class="alert alert-danger">
                             <strong>Bemærk!</strong> Sandsynligheden skal være mindre en 100%
                           </div>

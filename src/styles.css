@@ -1,3 +1,12 @@
+.custom-btn {
+  background: rgb(213, 46, 46);
+  color: #fff;
+  border: 2px solid rgb(213, 46, 46);
+  border-radius: 3px;
+  padding: 5px 10px;
+  text-transform: uppercase;
+}
+
 .serif {
   font-family: 'cambria math';
 }

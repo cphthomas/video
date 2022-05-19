@@ -53,11 +53,17 @@ export default function Andel() {
 
   // const [show, setShow] = useState(true);
   var [show2, setShow2] = useState(false);
+  var colordummy2 = show2 ? 'danger' : 'primary';
   var [show3, setShow3] = useState(false);
+  var colordummy3 = show3 ? 'danger' : 'primary';
   var [show4, setShow4] = useState(false);
+  var colordummy4 = show4 ? 'danger' : 'primary';
   var [show5, setShow5] = useState(false);
+  var colordummy5 = show5 ? 'danger' : 'primary';
   var [show6, setShow6] = useState(false);
+  var colordummy6 = show6 ? 'danger' : 'primary';
   var [show7, setShow7] = useState(false);
+  var colordummy7 = show7 ? 'danger' : 'primary';
 
   var significancelevel = 0.05;
   if (sig === '5% signifikansniveau') {
@@ -84,6 +90,8 @@ export default function Andel() {
   };
   var fpc = 1;
   fpctext === 'Sæt kendt endelig populationsstørrelse' ? (fpc = 1) : (fpc = +Math.sqrt((f - b) / (f - 1)));
+  var colordummyfpc =
+    fpctext === 'Sæt kendt endelig populationsstørrelse' ? 'btn btn-primary btn-sm' : 'btn btn-danger btn-sm';
   var stdev = Math.sqrt((p * (1 - p)) / b) * fpc;
   var percentile = norminv(1 - significancelevel / 2, 0, 1);
   var lower = p - percentile * stdev;
@@ -763,7 +771,7 @@ export default function Andel() {
                     <Row>
                       <Col class="col-6">
                         <div>
-                          <Button size="sm" onClick={() => setShow2(!show2)}>
+                          <Button variant={colordummy2} size="sm" onClick={() => setShow2(!show2)}>
                             {show2 && 'Skjul forudsætninger'}
                             {!show2 && 'Forudsætninger'}
                           </Button>
@@ -842,7 +850,7 @@ export default function Andel() {
                     {/* Punktestimat########################################################################################################################################################################################## */}
                     <Row>
                       <Col class="col-6">
-                        <Button size="sm" onClick={() => setShow3(!show3)}>
+                        <Button variant={colordummy3} size="sm" onClick={() => setShow3(!show3)}>
                           {show3 && 'Skjul Punktestimat'}
                           {!show3 && 'Punktestimat'}
                         </Button>
@@ -875,7 +883,7 @@ export default function Andel() {
                     {/* Konfidensinterval########################################################################################################################################################################################## */}
                     <Row>
                       <Col class="col-6">
-                        <Button size="sm" onClick={() => setShow6(!show6)}>
+                        <Button variant={colordummy6} size="sm" onClick={() => setShow6(!show6)}>
                           {show6 && 'Skjul Konfidensinterval'}
                           {!show6 && 'Konfidensinterval'}
                         </Button>
@@ -911,7 +919,7 @@ export default function Andel() {
                     {/* Hypoteser */}
                     <Row>
                       <Col class="col-6">
-                        <Button size="sm" onClick={() => setShow4(!show4)}>
+                        <Button variant={colordummy4} size="sm" onClick={() => setShow4(!show4)}>
                           {show4 && 'Skjul Hypoteser'}
                           {!show4 && 'Hypoteser'}
                         </Button>
@@ -1134,7 +1142,7 @@ export default function Andel() {
                     {/* Formler og figurer */}
                     <Row>
                       <Col class="col-6">
-                        <Button size="sm" onClick={() => setShow5(!show5)}>
+                        <Button variant={colordummy5} size="sm" onClick={() => setShow5(!show5)}>
                           {show5 && 'Skjul Formler og figurer'}
                           {!show5 && 'Formler og figurer'}
                         </Button>
@@ -1167,6 +1175,12 @@ export default function Andel() {
                                                       <MathJax>
                                                         {' '}
                                                         {`Inside a MathJax block element, one might use both Latex inline math, such as \\(x\\) or \\(\\frac{25x}{10} = 2^{10}\\), but then also switch to Latex display math, like \\[\\sum_{n = 100}^{1000}\\left(\\frac{10\\sqrt{n}}{n}\\right)\\] ... and then continue with inline math.`}
+                                                        <MathJax>{`\\\\hat{p} = \\frac{succeser}{n} = \\frac{{a}}{{b}} = \\approx ' + ${numberFormat4(
+                                                          p
+                                                        )} \\`}</MathJax>
+                                                      </MathJax>
+                                                      <MathJax>
+                                                        {`Inside a MathJax \\(\\hat{p} = \\frac{succeser}{n}\\) test \\[\\sum_{n = 100}^{1000}\\left(\\frac{10\\sqrt{n}}{n}\\right)\\] then continue`}
                                                       </MathJax>
                                                     </div>
                                                     <MathJax dynamic inline>
@@ -1205,7 +1219,7 @@ export default function Andel() {
 
                     <Row>
                       <Col class="col-6">
-                        <Button size="sm" onClick={() => setShow7(!show7)}>
+                        <Button variant={colordummy7} size="sm" onClick={() => setShow7(!show7)}>
                           {show7 && 'Skjul fejlmargin'}
                           {!show7 && 'sæt ønsket fejlmargin'}
                         </Button>
@@ -1288,7 +1302,7 @@ export default function Andel() {
                     <Row>
                       <Col>
                         <div>
-                          <button type="button" class="btn btn-primary btn-sm" onClick={toggleDisplay}>
+                          <button type="button" class={colordummyfpc} onClick={toggleDisplay}>
                             {fpctext}
                           </button>
                         </div>

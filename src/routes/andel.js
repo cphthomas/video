@@ -183,18 +183,6 @@ export default function Andel() {
   yop.unshift(0);
   yop.push(0);
 
-  // const inlineFormula = '\\cos (2\\theta) = \\cos^2 \\theta - \\sin^2 \\theta = \\frac{2x}{34y}';
-  // const blockFormula = `\\frac{n!}{k!(n-k)!} = \\binom{n}{k} = \\frac{2x}{34y}`;
-  // var phatFormula =
-  //   `\\hat{p} = \\frac{succeser}{n} = \\frac{${a}}{${b}} = ` + a + '/' + b + ' \\approx ' + numberFormat4(p);
-  // var KIFormula =
-  //   (1 - significancelevel) * 100 +
-  //   `\\% \\ KI\\ = \\hat{p} \\pm z_{1-\\frac{\\alpha}{2}}\\cdot \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}} \\approx `;
-  // var KIFormula2 = `${numberFormat4(p)} \\pm ${numberFormat4(q2)} \\cdot \\sqrt{\\frac{${numberFormat4(
-  //   p
-  // )}(1-${numberFormat4(p)})}{${b}}} \\approx `;
-  // var KIFormula3 = `[${numberFormat4(lower * 100)}\\%;${numberFormat4(upper * 100)}\\%]`;
-
   const optionsop = {
     title: {
       text: 'Z-fordelingen et-sidet alternativ hypotese op',
@@ -1157,41 +1145,61 @@ export default function Andel() {
                                       <p class="card-text">
                                         <>
                                           <small>
-                                            <p>{/* Inline formula: <InlineMath math={inlineFormula} /> */}</p>
-                                            <hr></hr>
-                                            <p>Block formula:</p>
-                                            {/* <BlockMath math={blockFormula} />
-                                          <BlockMath math={phatFormula} />
-                                          <BlockMath math={KIFormula} />
-                                          <BlockMath math={KIFormula2} />
-                                          <BlockMath math={KIFormula3} /> */}
-
-                                            <hr></hr>
                                             <Row>
                                               <Col>
                                                 <div>
                                                   <div>
                                                     <div>
-                                                      <MathJax>
-                                                        {' '}
-                                                        {`Inside a MathJax block element, one might use both Latex inline math, such as \\(x\\) or \\(\\frac{25x}{10} = 2^{10}\\), but then also switch to Latex display math, like \\[\\sum_{n = 100}^{1000}\\left(\\frac{10\\sqrt{n}}{n}\\right)\\] ... and then continue with inline math.`}
-                                                        <MathJax>{`\\\\hat{p} = \\frac{succeser}{n} = \\frac{{a}}{{b}} = \\approx ' + ${numberFormat4(
+                                                      <MathJax dynamic>
+                                                        Punktestimatet kan udregnes til:
+                                                        <span>{`$$\\hat{p} = \\frac{succeser}{n} = \\frac{${a}}{${b}} \\approx ${numberFormat4(
                                                           p
-                                                        )} \\`}</MathJax>
-                                                      </MathJax>
-                                                      <MathJax>
-                                                        {`Inside a MathJax \\(\\hat{p} = \\frac{succeser}{n}\\) test \\[\\sum_{n = 100}^{1000}\\left(\\frac{10\\sqrt{n}}{n}\\right)\\] then continue`}
+                                                        )}$$`}</span>
+                                                        <hr></hr>
+                                                        {(1 - significancelevel) * 100}% konfidensintervallet kan
+                                                        udregnes ved:
+                                                        <span>
+                                                          {
+                                                            '$$ \\hat{p} \\pm z_{1-\\frac{\\alpha}{2}}\\cdot \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}} \\approx $$'
+                                                          }
+                                                        </span>
+                                                        <span>{`$$ ${numberFormat4(p)} \\pm ${numberFormat4(
+                                                          q2
+                                                        )} \\cdot \\sqrt{\\frac{${numberFormat4(p)}(1-${numberFormat4(
+                                                          p
+                                                        )})}{${b}}} \\approx $$`}</span>
+                                                        <span>{`$$[ ${numberFormat4(lower * 100)}\\%;${numberFormat4(
+                                                          upper * 100
+                                                        )}\\%]$$`}</span>
+                                                        Vi kan med {(1 - significancelevel) * 100}% sandsynlighed sige
+                                                        at andelen i populationen ligger mellem{' '}
+                                                        {numberFormat4(lower * 100)}% og {numberFormat4(upper * 100)}%
+                                                        <hr></hr>
+                                                        Fejlmarginen er den halve længde af konfidensintervallet dvs.
+                                                        øvre minus nedre grænse for konfidensintervallet divideret med
+                                                        2, denne kan udregnes som halvdelen af konfidensintervallet:
+                                                        <span>
+                                                          {`$$ \\frac{${numberFormat4(upper)}-${numberFormat4(
+                                                            lower
+                                                          )}}{2}\\approx${numberFormat4(
+                                                            ((upper - lower) / 2) * 100
+                                                          )}\\% $$`}
+                                                        </span>
+                                                        Eller direkte ved formlen:
+                                                        <span>{`$$z_{1-\\frac{\\alpha}{2}}\\cdot \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}} \\approx $$'`}</span>
+                                                        <span>
+                                                          {`$$ ${numberFormat4(
+                                                            q2
+                                                          )} \\cdot \\sqrt{\\frac{${numberFormat4(p)}(1-${numberFormat4(
+                                                            p
+                                                          )})}{${b}}} \\approx ${numberFormat4(
+                                                            ((upper - lower) / 2) * 100
+                                                          )}\\% $$`}
+                                                        </span>
+                                                        <hr></hr>
+                                                        Z-teststørrelsen kan findes ved formlen:
                                                       </MathJax>
                                                     </div>
-                                                    <MathJax dynamic inline>
-                                                      {`$\\alpha$`}
-                                                      <br></br>
-                                                    </MathJax>
-                                                    <b>Do</b>:{' '}
-                                                    <MathJax inline dynamic>
-                                                      An example is the equation <span>{`$${a}x^4 = 100$`}</span>
-                                                    </MathJax>{' '}
-                                                    (expression with math in separate element and expression)
                                                   </div>
                                                 </div>
                                               </Col>

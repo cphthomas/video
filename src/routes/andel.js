@@ -184,8 +184,26 @@ export default function Andel() {
   yop.push(0);
 
   const optionsop = {
+    yAxis: [
+      {
+        // // Primary yAxis
+        // labels: {
+        //   format: '{value}',
+        // },
+        title: {
+          text: 'Sandsynlighed',
+          style: {
+            color: Highcharts.getOptions().colors[1],
+          },
+        },
+      },
+    ],
     title: {
       text: 'Z-fordelingen et-sidet alternativ hypotese op',
+    },
+    subtitle: {
+      useHTML: true,
+      text: 'H<sub>0</sub>:p≤' + c + '%   |  H<sub>1</sub>:p>' + c + '%',
     },
     annotations: [
       {
@@ -293,8 +311,26 @@ export default function Andel() {
   };
 
   const optionsned = {
+    yAxis: [
+      {
+        // // Primary yAxis
+        // labels: {
+        //   format: '{value}',
+        // },
+        title: {
+          text: 'Sandsynlighed',
+          style: {
+            color: Highcharts.getOptions().colors[1],
+          },
+        },
+      },
+    ],
     title: {
       text: 'Z-fordelingen et-sidet alternativ hypotese ned',
+    },
+    subtitle: {
+      useHTML: true,
+      text: 'H<sub>0</sub>:p≥' + c + '%   |  H<sub>1</sub>:p<' + c + '%',
     },
     annotations: [
       {
@@ -484,11 +520,29 @@ export default function Andel() {
         ],
       },
     ],
+    yAxis: [
+      {
+        // // Primary yAxis
+        // labels: {
+        //   format: '{value}',
+        // },
+        title: {
+          text: 'Sandsynlighed',
+          style: {
+            color: Highcharts.getOptions().colors[1],
+          },
+        },
+      },
+    ],
     chart: {
       type: 'spline',
     },
     title: {
       text: 'Z-fordelingen 2-sidet alternativ hypotese',
+    },
+    subtitle: {
+      useHTML: true,
+      text: 'H<sub>0</sub>:p=' + c + '%   |  H<sub>1</sub>:p≠' + c + '%',
     },
     credits: {
       enabled: false,
@@ -1157,11 +1211,22 @@ export default function Andel() {
                                                         )}$$`}</span>
                                                         <hr></hr>
                                                         {(1 - significancelevel) * 100}% konfidensintervallet kan
-                                                        udregnes ved:
+                                                        udregnes ved nedenstående formel:
                                                         <span>
                                                           {
                                                             '$$ \\hat{p} \\pm z_{1-\\frac{\\alpha}{2}}\\cdot \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}} \\approx $$'
                                                           }
+                                                        </span>
+                                                        <span>
+                                                          Hvor {`$\\alpha$`} er {numberFormat4(significancelevel)}=
+                                                          {numberFormat4(significancelevel * 100)}% signifikansniveauet.
+                                                          <br></br>
+                                                          Hvor{' '}
+                                                          {`$z_{1-\\frac{\\alpha}{2}}=z_{1-\\frac{${significancelevel}}{2}}=z_{1-${
+                                                            significancelevel / 2
+                                                          }}=z_{${1 - significancelevel / 2}}=$`}{' '}
+                                                          {numberFormat4(q2)} er {100 * (1 - significancelevel / 2)}%
+                                                          fraktilen for z-fordelingen dvs. standard normalfordelingen.
                                                         </span>
                                                         <span>{`$$ ${numberFormat4(p)} \\pm ${numberFormat4(
                                                           q2
@@ -1197,7 +1262,28 @@ export default function Andel() {
                                                           )}\\% $$`}
                                                         </span>
                                                         <hr></hr>
-                                                        Z-teststørrelsen kan findes ved formlen:
+                                                        Hvis vi ikke kan afvise nulhypotesen, betyder det at den sande
+                                                        populations parameter {`$p=p_{0}$`}. Så gælder fra CLT, at
+                                                        stikprøvefordelingen er normalfordelt med middelværdi{' '}
+                                                        {`$\\mu=p_{0}$`}.<br></br>
+                                                        For at finde Z-teststørrelsen, skal vi bestemme standardfejlen
+                                                        for andele SE ved formlen herunder, hvor {`$p_{0}=${c}$`}% er
+                                                        den andel vi tester under nulhypotesen {`$H_{0}$`}:
+                                                        <span>
+                                                          {`$$SE = \\sqrt{\\frac{p_{0}(1-p_{0})}{n}}=\\sqrt{\\frac{${
+                                                            c / 100
+                                                          }(1-${c / 100})}{${b}}}\\approx ${numberFormat4(
+                                                            Math.pow(((c / 100) * (1 - c / 100)) / b, 0.5)
+                                                          )}$$`}
+                                                        </span>
+                                                        Z-teststørrelsen angiver forskellen mellem {`$\\hat{p}$`} og{' '}
+                                                        {`$p_{0}$`}, divideret med SE for at vi kan benytte
+                                                        z-fordelingen:
+                                                        <span>{`$$Z-teststørrelsen = \\frac{\\hat{p}-p_{0}}{SE} \\approx \\frac{${numberFormat4(
+                                                          p
+                                                        )}-${c / 100}}{${numberFormat4(
+                                                          Math.pow(((c / 100) * (1 - c / 100)) / b, 0.5)
+                                                        )}} \\approx ${numberFormat4(ztest)} $$`}</span>
                                                       </MathJax>
                                                     </div>
                                                   </div>

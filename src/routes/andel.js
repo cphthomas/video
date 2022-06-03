@@ -20,6 +20,10 @@ import HighchartsReact from 'highcharts-react-official';
 
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheckCircle, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
+// import { library } from '@fortawesome/fontawesome-svg-core';
+
 require('highcharts/modules/annotations')(Highcharts);
 
 var cdf = require('@stdlib/stats-base-dists-normal-cdf');
@@ -859,7 +863,7 @@ export default function Andel() {
                                       <MathJax inline>
                                         <span>{`$ \\hat{p} $`}</span>
                                       </MathJax>{' '}
-                                      er punktestimatet for andelen {p}.<br></br>
+                                      er punktestimatet for andelen {numberFormat4(p)}.<br></br>
                                       <br />
                                     </span>
 
@@ -1000,8 +1004,11 @@ export default function Andel() {
                                       <p>
                                         Da p-værdien/signifikanssandsynligheden {numberFormat4(100 * pv2)}% er større
                                         end 5% signifikansniveauet, kan vi ikke afvise nulhypotesen H<sub>0</sub>.
-                                        <br></br>H<sub>0</sub>: p = {numberFormat4(c)}% dvs. andelen i populationen p er
-                                        lig med {numberFormat4(c)}%<br></br>
+                                        <br></br>
+                                        <FontAwesomeIcon icon={faCheckCircle} size="1x" color="white" beat /> H
+                                        <sub>0</sub>: p = {numberFormat4(c)}% dvs. andelen i populationen p er lig med{' '}
+                                        {numberFormat4(c)}%<br></br>
+                                        <FontAwesomeIcon icon={faXmarkCircle} size="1x" color="white" shake />{' '}
                                         <s>
                                           H<sub>1</sub>: p ≠ {numberFormat4(c)}% dvs. andelen i populationen p er
                                           forskellig fra {numberFormat4(c)}%
@@ -1016,11 +1023,14 @@ export default function Andel() {
                                       <p>
                                         Da p-værdien/signifikanssandsynligheden {numberFormat4(100 * pv2)}% er mindre
                                         end 5% signifikansniveauet, kan vi afvise H<sub>0</sub>.<br></br>
+                                        <FontAwesomeIcon icon={faXmarkCircle} size="1x" color="white" shake />{' '}
                                         <s>
                                           H<sub>0</sub>: p = {numberFormat4(c)}% dvs. andelen i populationen p er lig
                                           med {numberFormat4(c)}%
                                         </s>
-                                        <br></br>H<sub>1</sub>: p ≠ {numberFormat4(c)}% dvs. andelen i populationen p er
+                                        <br></br>
+                                        <FontAwesomeIcon icon={faCheckCircle} size="1x" color="white" beat /> H
+                                        <sub>1</sub>: p ≠ {numberFormat4(c)}% dvs. andelen i populationen p er
                                         forskellig fra {numberFormat4(c)}%<br></br>
                                         Vi afviser derfor at den sande andel i populationen p er {numberFormat4(c)}
                                         %.
@@ -1068,8 +1078,11 @@ export default function Andel() {
                                       <p>
                                         Da p-værdien/signifikanssandsynligheden {numberFormat4(100 * pv1op)}% er større
                                         end 5% signifikansniveauet, kan vi ikke afvise nulhypotesen H<sub>0</sub>.
-                                        <br></br>H<sub>0</sub>: p ≤ {numberFormat4(c)}% dvs. andelen i populationen p
-                                        højst er {numberFormat4(c)}%<br></br>
+                                        <br></br>
+                                        <FontAwesomeIcon icon={faCheckCircle} size="1x" color="white" beat /> H
+                                        <sub>0</sub>: p ≤ {numberFormat4(c)}% dvs. andelen i populationen p højst er{' '}
+                                        {numberFormat4(c)}%<br></br>
+                                        <FontAwesomeIcon icon={faXmarkCircle} size="1x" color="white" shake />{' '}
                                         <s>
                                           H<sub>1</sub>: p &gt; {numberFormat4(c)}% dvs. andelen i populationen p er
                                           større end {numberFormat4(c)}%
@@ -1084,12 +1097,15 @@ export default function Andel() {
                                       <p>
                                         Da p-værdien/signifikanssandsynligheden {numberFormat4(100 * pv1op)}% er mindre
                                         end 5% signifikansniveauet, kan vi afvise H<sub>0</sub>.<br></br>
+                                        <FontAwesomeIcon icon={faXmarkCircle} size="1x" color="white" shake />{' '}
                                         <s>
                                           H<sub>0</sub>: p ≤ {numberFormat4(c)}% dvs. andelen i populationen p højst er{' '}
                                           {numberFormat4(c)}%
                                         </s>
-                                        <br></br>H<sub>1</sub>: p &gt; {numberFormat4(c)}% dvs. andelen i populationen p
-                                        er større end {numberFormat4(c)}%<br></br>
+                                        <br></br>
+                                        <FontAwesomeIcon icon={faCheckCircle} size="1x" color="white" beat /> H
+                                        <sub>1</sub>: p &gt; {numberFormat4(c)}% dvs. andelen i populationen p er større
+                                        end {numberFormat4(c)}%<br></br>
                                         Vi afviser derfor at den sande andel i populationen p højst er{' '}
                                         {numberFormat4(c)}
                                         %.
@@ -1137,13 +1153,15 @@ export default function Andel() {
                                       <p>
                                         Da p-værdien/signifikanssandsynligheden {numberFormat4(100 * pv1ned)}% er større
                                         end 5% signifikansniveauet, kan vi ikke afvise nulhypotesen H<sub>0</sub>.
-                                        <br></br>H<sub>0</sub>: p ≥ {numberFormat4(c)}% dvs. andelen i populationen p
-                                        mindst er {numberFormat4(c)}%<br></br>
+                                        <br></br>
+                                        <FontAwesomeIcon icon={faCheckCircle} size="1x" color="white" beat /> H
+                                        <sub>0</sub>: p ≥ {numberFormat4(c)}% dvs. andelen i populationen p mindst er{' '}
+                                        {numberFormat4(c)}%<br></br>
+                                        <FontAwesomeIcon icon={faXmarkCircle} size="1x" color="white" shake />{' '}
                                         <s>
                                           H<sub>1</sub>: p &lt; {numberFormat4(c)}% dvs. andelen i populationen p er
                                           mindre end {numberFormat4(c)}%
                                         </s>
-                                        <br></br>
                                         <br></br>
                                         Vi kan således ikke afvise at den sande andel i populationen p mindst er{' '}
                                         {numberFormat4(c)}
@@ -1154,12 +1172,15 @@ export default function Andel() {
                                       <p>
                                         Da p-værdien/signifikanssandsynligheden {numberFormat4(100 * pv1ned)}% er mindre
                                         end 5% signifikansniveauet, kan vi afvise H<sub>0</sub>.<br></br>
+                                        <FontAwesomeIcon icon={faXmarkCircle} size="1x" color="white" shake />{' '}
                                         <s>
                                           H<sub>0</sub>: p ≥ {numberFormat4(c)}% dvs. andelen i populationen p mindst er{' '}
                                           {numberFormat4(c)}%
                                         </s>
-                                        <br></br>H<sub>1</sub>: p &lt; {numberFormat4(c)}% dvs. andelen i populationen p
-                                        er mindre end {numberFormat4(c)}%<br></br>
+                                        <br></br>
+                                        <FontAwesomeIcon icon={faCheckCircle} size="1x" color="white" beat /> H
+                                        <sub>1</sub>: p &lt; {numberFormat4(c)}% dvs. andelen i populationen p er mindre
+                                        end {numberFormat4(c)}%<br></br>
                                         <br></br>
                                         Vi afviser derfor at den sande andel i populationen p mindst er{' '}
                                         {numberFormat4(c)}

@@ -20,11 +20,17 @@ import HighchartsReact from 'highcharts-react-official';
 
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faCheckCircle, faXmarkCircle } from '@fortawesome/free-solid-svg-icons';
+
 require('highcharts/modules/annotations')(Highcharts);
 
-var cdf = require('@stdlib/stats-base-dists-normal-cdf');
-var pdf = require('@stdlib/stats/base/dists/normal/pdf');
+// var cdf = require('@stdlib/stats-base-dists-normal-cdf');
+// var pdf = require('@stdlib/stats/base/dists/normal/pdf');
 var quantile = require('@stdlib/stats/base/dists/normal/quantile');
+var cdft = require('@stdlib/stats/base/dists/t/cdf');
+var pdft = require('@stdlib/stats/base/dists/t/pdf');
+var quantilet = require('@stdlib/stats/base/dists/t/quantile');
 
 const config = {
   loader: { load: ['[tex]/html'] },
@@ -44,7 +50,7 @@ const config = {
 export default function Mean() {
   var [a, seta] = useState(+(10).toFixed(2)); //middelværdi
   var [b, setb] = useState(+(50).toFixed(2)); //stikprøvestørrelse
-  var [c, setc] = useState(+(9).toFixed(2)); //test middel
+  var [c, setc] = useState(+(10.5).toFixed(2)); //test middel
   var [std, setstd] = useState(+(2).toFixed(2)); //standardafvigelse
   var [f, setf] = useState(+(b * 10).toFixed(2)); //
   var [sig, setsig] = useState(['5% signifikansniveau']);
@@ -53,8 +59,8 @@ export default function Mean() {
   };
 
   // const [show, setShow] = useState(true);
-  var [show2, setShow2] = useState(false);
-  var colordummy2 = show2 ? 'danger' : 'primary';
+  // var [show2, setShow2] = useState(false);
+  // var colordummy2 = show2 ? 'danger' : 'primary';
   var [show3, setShow3] = useState(false);
   var colordummy3 = show3 ? 'danger' : 'primary';
   var [show4, setShow4] = useState(false);
@@ -80,7 +86,7 @@ export default function Mean() {
   }
 
   var p = a / b;
-  var ptest = c / 100;
+  var ptest = c;
   var [fpctext, setfpctext] = useState('Sæt kendt endelig populationsstørrelse');
   const toggleDisplay = () => {
     if (fpctext === 'Sæt kendt endelig populationsstørrelse') {
@@ -93,16 +99,16 @@ export default function Mean() {
   fpctext === 'Sæt kendt endelig populationsstørrelse' ? (fpc = 1) : (fpc = +Math.sqrt((f - b) / (f - 1)));
   var colordummyfpc =
     fpctext === 'Sæt kendt endelig populationsstørrelse' ? 'btn btn-primary btn-sm' : 'btn btn-danger btn-sm';
-  var stdev = Math.sqrt((p * (1 - p)) / b) * fpc;
-  var percentile = norminv(1 - significancelevel / 2, 0, 1);
-  var lower = p - percentile * stdev;
-  var upper = p + percentile * stdev;
-  var forudsætning = b * p * (1 - p);
+  var stdev = (std / Math.sqrt(b)) * fpc; //SEM
+  var percentile = quantilet(1 - significancelevel / 2, b - 1);
+  var lower = a - percentile * stdev;
+  var upper = a + percentile * stdev;
+  // var forudsætning = b * p * (1 - p);
   var fejlmargin = (upper * 100 - lower * 100) / 2;
   var [d, setd] = useState(+Math.floor(fejlmargin).toFixed(2));
-  var ztest = (p - ptest) / Math.sqrt((ptest * (1 - ptest)) / b);
-  var pv1ned = cdf(ztest, 0, 1);
-  var pv1op = 1 - cdf(ztest, 0, 1);
+  var ztest = (a - ptest) / stdev;
+  var pv1ned = cdft(ztest, b - 1);
+  var pv1op = 1 - cdft(ztest, b - 1);
   var pv2 = 2 * Math.min(+pv1ned, +pv1op);
   var factor = 1;
 
@@ -111,20 +117,20 @@ export default function Mean() {
   var minsample = (norminv(1 - significancelevel / 2, 0, 1) / (d / 100)) ** 2 * (p * (1 - p)) * fpc;
   var N = 500;
   var x = [...Array(N + 1).keys()].map((i) => (factor * (i - N / 2)) / 50);
-  var y = x.map((x) => pdf(x, 0.0, 1.0));
+  var y = x.map((x) => pdft(x, b - 1));
   var coordinates = x.map(function (v, i) {
     return [v, y[i]];
   });
-  var qop = quantile(1 - significancelevel, 0, 1);
-  var qned = quantile(significancelevel, 0, 1);
-  var q2 = quantile(1 - significancelevel / 2, 0, 1);
+  var qop = quantilet(1 - significancelevel, b - 1);
+  var qned = quantilet(significancelevel, b - 1);
+  var q2 = quantilet(1 - significancelevel / 2, b - 1);
 
   var xciop = x.filter(function (x) {
     return x > qop;
   });
   xciop.unshift(qop, qop);
   xciop.sort((a, b) => a - b);
-  var yciop = xciop.map((xciop) => pdf(xciop, 0, 1.0));
+  var yciop = xciop.map((xciop) => pdft(xciop, b - 1));
   yciop[0] = +0;
   var coordinatesciop = xciop.map(function (v, i) {
     return [v, yciop[i]];
@@ -134,7 +140,7 @@ export default function Mean() {
     return x < qned;
   });
   xcined.push(qned);
-  var ycined = xcined.map((xcined) => pdf(xcined, 0, 1.0));
+  var ycined = xcined.map((xcined) => pdft(xcined, b - 1));
   xcined.push(qned);
   ycined.push(0);
   var coordinatescined = xcined.map(function (v, i) {
@@ -146,7 +152,7 @@ export default function Mean() {
   });
   xci2op.unshift(q2, q2);
   xci2op.sort((a, b) => a - b);
-  var yci2op = xci2op.map((xci2op) => pdf(xci2op, 0, 1.0));
+  var yci2op = xci2op.map((xci2op) => pdft(xci2op, b - 1));
   yci2op[0] = +0;
   var coordinatesci2op = xci2op.map(function (v, i) {
     return [v, yci2op[i]];
@@ -156,7 +162,7 @@ export default function Mean() {
     return x < -q2;
   });
   xci2ned.push(-q2);
-  var yci2ned = xci2ned.map((xci2ned) => pdf(xci2ned, 0, 1.0));
+  var yci2ned = xci2ned.map((xci2ned) => pdft(xci2ned, b - 1));
   xci2ned.push(-q2);
   yci2ned.push(0);
   var coordinatesci2ned = xci2ned.map(function (v, i) {
@@ -167,7 +173,7 @@ export default function Mean() {
     return x < ztest;
   });
   xned.push(ztest);
-  var yned = xned.map((xned) => pdf(xned, 0.0, 1.0));
+  var yned = xned.map((xned) => pdft(xned, b - 1));
   xned.push(ztest);
   yned.push(0);
   // var coordinatesned = xned.map(function (v, i) {
@@ -178,7 +184,7 @@ export default function Mean() {
     return x > ztest;
   });
   xop.unshift(ztest);
-  var yop = xop.map((xop) => pdf(xop, 0.0, 1.0));
+  var yop = xop.map((xop) => pdft(xop, b - 1));
   xop.unshift(ztest);
   xop.push(5);
   yop.unshift(0);
@@ -200,7 +206,7 @@ export default function Mean() {
       },
     ],
     title: {
-      text: 'Z-fordelingen et-sidet alternativ hypotese op',
+      text: 't-fordelingen et-sidet alternativ hypotese op',
     },
     subtitle: {
       useHTML: true,
@@ -228,13 +234,13 @@ export default function Mean() {
             },
             text:
               +pv1op <= significancelevel
-                ? 'z-teststørrelsen er ' +
+                ? 't-teststørrelsen er ' +
                   numberFormat4(ztest) +
                   '<br/>Forkast nulhypotesen' +
                   '<br/>P-værdien er ' +
                   numberFormat4(pv1op * 100) +
                   '%'
-                : 'z-teststørrelsen er ' +
+                : 't-teststørrelsen er ' +
                   numberFormat4(ztest) +
                   '<br/>Forkast IKKE nulhypotesen' +
                   '<br/>P-værdien er ' +
@@ -251,7 +257,7 @@ export default function Mean() {
               xAxis: 0,
               yAxis: 0,
               x: qop,
-              y: pdf(qop, 0.0, 1.0),
+              y: pdft(qop, b - 1),
             },
             text:
               'Kritisk værdi ' +
@@ -302,7 +308,7 @@ export default function Mean() {
           symbol: 'circle',
           radius: 2,
         },
-        name: 'z-teststørrelse',
+        name: 't-teststørrelse',
         data: [
           [ztest, 0],
           [ztest, 0.45],
@@ -327,7 +333,7 @@ export default function Mean() {
       },
     ],
     title: {
-      text: 'Z-fordelingen et-sidet alternativ hypotese ned',
+      text: 't-fordelingen et-sidet alternativ hypotese ned',
     },
     subtitle: {
       useHTML: true,
@@ -355,13 +361,13 @@ export default function Mean() {
             },
             text:
               +pv1ned <= significancelevel
-                ? 'z-teststørrelsen er ' +
+                ? 't-teststørrelsen er ' +
                   numberFormat4(ztest) +
                   '<br/>Forkast nulhypotesen' +
                   '<br/>P-værdien er ' +
                   numberFormat4(pv1ned * 100) +
                   '%'
-                : 'z-teststørrelsen er ' +
+                : 't-teststørrelsen er ' +
                   numberFormat4(ztest) +
                   '<br/>Forkast IKKE nulhypotesen' +
                   '<br/>P-værdien er ' +
@@ -378,7 +384,7 @@ export default function Mean() {
               xAxis: 0,
               yAxis: 0,
               x: qned,
-              y: pdf(qned, 0.0, 1.0),
+              y: pdft(qned, b - 1),
             },
             text:
               'Kritisk værdi ' +
@@ -416,7 +422,7 @@ export default function Mean() {
           symbol: 'circle',
           radius: 2,
         },
-        name: 'z-teststørrelse',
+        name: 't-teststørrelse',
         data: [
           [ztest, 0],
           [ztest, 0.45],
@@ -461,13 +467,13 @@ export default function Mean() {
             },
             text:
               +pv2 <= significancelevel
-                ? 'z-teststørrelsen er ' +
+                ? 't-teststørrelsen er ' +
                   numberFormat4(ztest) +
                   '<br/>Forkast nulhypotesen' +
                   '<br/>P-værdien er ' +
                   numberFormat4(pv2 * 100) +
                   '%'
-                : 'z-teststørrelsen er ' +
+                : 't-teststørrelsen er ' +
                   numberFormat4(ztest) +
                   '<br/>Forkast IKKE nulhypotesen' +
                   '<br/>P-værdien er ' +
@@ -485,7 +491,7 @@ export default function Mean() {
               xAxis: 0,
               yAxis: 0,
               x: q2,
-              y: pdf(q2, 0.0, 1.0),
+              y: pdft(q2, b - 1),
             },
             text:
               'Kritisk værdi ' +
@@ -505,7 +511,7 @@ export default function Mean() {
               xAxis: 0,
               yAxis: 0,
               x: -q2,
-              y: pdf(-q2, 0.0, 1.0),
+              y: pdft(-q2, b - 1),
             },
             text:
               'Kritisk værdi ' +
@@ -539,7 +545,7 @@ export default function Mean() {
       type: 'spline',
     },
     title: {
-      text: 'Z-fordelingen 2-sidet alternativ hypotese',
+      text: 't-fordelingen 2-sidet alternativ hypotese',
     },
     subtitle: {
       useHTML: true,
@@ -564,10 +570,10 @@ export default function Mean() {
           symbol: 'circle',
           radius: 2,
         },
-        name: 'z-teststørrelse',
+        name: 't-teststørrelse',
         data: [
           [-ztest, 0],
-          [-ztest, pdf(ztest, 0.0, 1.0)],
+          [-ztest, pdft(ztest, b - 1)],
         ],
       },
       {
@@ -579,7 +585,7 @@ export default function Mean() {
           symbol: 'circle',
           radius: 2,
         },
-        name: 'z-teststørrelse',
+        name: 't-teststørrelse',
         data: [
           [ztest, 0],
           [ztest, 0.45],
@@ -625,8 +631,7 @@ export default function Mean() {
                 <div class="p-3 mb-2 bg-white">
                   <Form>
                     <span class="lead text-muted">
-                      1 Kvantitativ stikprøve
-                      {setb}{' '}
+                      1 Kvantitativ stikprøve{' '}
                       <OverlayTrigger
                         placement="auto"
                         overlay={
@@ -645,7 +650,9 @@ export default function Mean() {
                       </OverlayTrigger>
                     </span>
                     <p class="lead text-muted">
-                      Analyse af en kvantitativ variabel, tests af middel og standardafvigelse
+                      percentile {percentile} og stdev {stdev} og quantile {quantile(0.025, b - 1)} og quantilet{' '}
+                      {quantilet(0.025, b - 1)} og pdft {pdft(0.01, b - 1)} og cdft {cdft(-1.96, b - 1)} og b {b}Analyse
+                      af en kvantitativ variabel, tests af middel og standardafvigelse
                     </p>
 
                     {/* Signifikansniveau########################################################################################################################################################################################## */}
@@ -681,9 +688,10 @@ export default function Mean() {
                       <Col>
                         {+b < 30 && (
                           <div class="alert alert-warning">
-                            <strong>Bemærk!</strong> Stikprøven er mindre end 30 observationer, derfor bør man sikre at
-                            stikprøven stammer fra en normalfordelt population, denne forudsætning kan undersøges med
-                            fx. et normalfraktildiagram.
+                            <strong>Bemærk!</strong> Stikprøven er mindre end 30 observationer, det er derfor en
+                            forudsætning at stikprøven stammer fra en normalfordelt population, denne forudsætning kan
+                            undersøges med fx. et normalfraktildiagram. Da vi ikke har rådata i dette tilfælde er et
+                            forudsætningscheck ikke muligt.
                           </div>
                         )}
                       </Col>
@@ -847,92 +855,12 @@ export default function Mean() {
                     <Row></Row>
                     <hr></hr>
 
-                    {/* Forudsætninger########################################################################################################################################################################################## */}
-                    <Row>
-                      <Col class="col-6">
-                        <div>
-                          <Button variant={colordummy2} size="sm" onClick={() => setShow2(!show2)}>
-                            {show2 && 'Skjul forudsætninger'}
-                            {!show2 && 'Forudsætninger'}
-                          </Button>
-
-                          {show2 && (
-                            <div>
-                              <br></br>
-                              <div class="card">
-                                <div class={+forudsætning > +9 ? 'card-body bg-success' : 'card-body bg-warning'}>
-                                  <p class="card-text text-white">
-                                    <h5>
-                                      Forudsætning for testet{' '}
-                                      <OverlayTrigger
-                                        placement="auto"
-                                        overlay={
-                                          <Tooltip>
-                                            <p style={{ textAlign: 'left' }}>Forudsætning for testet</p>
-                                          </Tooltip>
-                                        }
-                                      >
-                                        <i class="fas fa-question-circle"></i>
-                                      </OverlayTrigger>
-                                    </h5>
-                                    <hr></hr>
-
-                                    <span>
-                                      For at sikre at stikprøven er tilstrækkeligt stor, til at vi med tilstrækkelig
-                                      sikkerhed kan udtale om populationen, bør forudsætningen herunder være opfyldt:{' '}
-                                      <br></br>
-                                      <MathJax inline dynamic>
-                                        <span>{`$n \\cdot \\hat{p} (1- \\hat{p}) = ${numberFormat4(
-                                          b
-                                        )} \\cdot ${numberFormat4(p)}(1-${numberFormat4(p)})=${numberFormat4(
-                                          forudsætning
-                                        )}$`}</span>
-                                      </MathJax>
-                                      <br></br>
-                                      Hvor{' '}
-                                      <MathJax inline>
-                                        <span>{`$n$`}</span>
-                                      </MathJax>{' '}
-                                      er stikprøvestørrelsen {b} og{' '}
-                                      <MathJax inline>
-                                        <span>{`$ \\hat{p} $`}</span>
-                                      </MathJax>{' '}
-                                      er punktestimatet for andelen {p}.<br></br>
-                                      <br />
-                                    </span>
-
-                                    {+forudsætning > 9 && (
-                                      <span>
-                                        Da {numberFormat4(forudsætning)} er større end 9, er forudsætningen opfyldt.
-                                        Havde forudsætningen ikke været opfyldt, bemærkes i den videre analyse, at der
-                                        kan være problemer med kvaliteten af analysen.
-                                      </span>
-                                    )}
-                                    {+forudsætning <= 9 && (
-                                      <span>
-                                        Da {numberFormat4(forudsætning)} ikke er større end 9, er forudsætningen ikke
-                                        opfyldt.
-                                        <br></br>
-                                        Dette bør bemærkes i den videre analyse. Der kan være problemer med kvaliteten
-                                        af analysen. Man gennemfører typisk analysen til trods for at forudsætningen
-                                        ikke er opfyldt.
-                                      </span>
-                                    )}
-                                  </p>
-                                </div>
-                              </div>
-                              <br></br>
-                            </div>
-                          )}
-                        </div>
-                      </Col>
-                    </Row>
                     {/* Punktestimat########################################################################################################################################################################################## */}
                     <Row>
                       <Col class="col-6">
                         <Button variant={colordummy3} size="sm" onClick={() => setShow3(!show3)}>
-                          {show3 && 'Skjul Punktestimat'}
-                          {!show3 && 'Punktestimat'}
+                          {show3 && 'Skjul Punktestimater'}
+                          {!show3 && 'Punktestimater'}
                         </Button>
                         <div>
                           {show3 && (
@@ -943,13 +871,44 @@ export default function Mean() {
                                   <div class="card-body">
                                     <div></div>
                                     <p class="card-text">
-                                      Vores bedste gæt på den sande andel i populationen kaldet p hat skrevet som{' '}
-                                      <span class="serif">p&#770;</span> (også kaldet punktestimatet) kan beregnes som:
-                                      <br />
-                                      antal successer/stikprøvestørrelse = {a}/{b} = {numberFormat4(a / b)} =
-                                      <span style={{ backgroundColor: '#80ff00' }}>
-                                        {numberFormat4((100 * a) / b)}%
-                                      </span>
+                                      <MathJax dynamic>
+                                        Vores bedste gæt på, også kaldet estimat for, den sande middelværdi i
+                                        populationen er stikprøvegennemsnittet <span>{`$\\bar{x}=${a}$`}</span>. Dette
+                                        estimat skrives <span>{`$\\hat{\\mu}$`}</span> og udtales <i>my hat</i>.
+                                        <br></br>Den sande ukendte middelværdi i populationen betegnes{' '}
+                                        <span>{`$\\mu$`}</span>, da vi estimerer, angiver vi dette med hat-symbolet over{' '}
+                                        <span>{`$\\hat{\\mu}$`}</span>. Vi kalder også <span>{`$\\hat{\\mu}$`}</span>{' '}
+                                        for punktestimatet.<br></br>
+                                        Her har vi ikke de enkelte observationer, men kun de beregnede deskriptorer
+                                        stikprøve -gennemsnit og -standardafvigelse. Havde vi rådata (hver af de {
+                                          b
+                                        }{' '}
+                                        observationer), kunne vi bestemme punktestimatet som stikprøvegennemsnittet{' '}
+                                        <span>{`$\\bar{x}$`}</span> med formlen herunder:
+                                        <span>{`$$\\frac{\\sum_{i=1}^{n}{x_{i}}}{n} = \\frac{\\sum_{i=1}^{${b}}{x_{i}}}{${b}}=\\frac{x_{1}+...+x_{${b}}}{${b}}=${a}
+                                          
+                                        $$`}</span>
+                                        Vores bedste gæt på, også kaldet estimat for, den sande standardafvigelse i
+                                        populationen er {std}. Dette estimat skrives <span>{`$\\hat{\\sigma}$`}</span>{' '}
+                                        og udtales <i>sigma hat</i>.<br></br>Den sande ukendte standardafvigelse i
+                                        populationen betegnes <span>{`$\\sigma$`}</span>, da vi estimerer, angiver vi
+                                        dette med hat-symbolet over <span>{`$\\hat{\\sigma}$`}</span>. Vi kalder også{' '}
+                                        <span>{`$\\hat{\\sigma}$`}</span> for punktestimatet.<br></br>
+                                        Her har vi ikke de enkelte observationer, men kun de beregnede deskriptorer
+                                        stikprøve -gennemsnit og -standardafvigelse. Havde vi rådata (hver af de {
+                                          b
+                                        }{' '}
+                                        observationer), kunne vi bestemme estimatet ud fra stikprøve-standardafvigelsen{' '}
+                                        <span>{`$\\hat{\\sigma}$`}</span> med formlen herunder:
+                                        <span>{`$$\\sqrt{\\frac{\\sum_{i=1}^{n}{(x_{i}-\\bar{x})^2}}{n-1}} = \\sqrt{\\frac{\\sum_{i=1}^{${b}}{(x_{i}-\\bar{x})^2}}{${
+                                          b - 1
+                                        }}}=$$`}</span>
+                                        <span>{`$$\\sqrt{ \\frac{(x_{1}-\\bar{x})^2+...+(x_{${b}}-\\bar{x})^2}{${
+                                          b - 1
+                                        }}}=${std}
+                                          
+                                        $$`}</span>
+                                      </MathJax>
                                     </p>
                                   </div>
                                 </div>
@@ -976,15 +935,18 @@ export default function Mean() {
                                   <div class="card-body">
                                     <div></div>
                                     <p class="card-text">
-                                      Konfidensintervallet angiver i hvilket interval den sande andel p i populationen
-                                      ligger med en vis sandsynlighed.<br></br>Den nedre grænse for konfidensintervallet
-                                      kan beregnes som {numberFormat4(lower * 100)}%, og den øvre grænse for
-                                      konfidensintervallet kan beregnes som {numberFormat4(upper * 100)}%<br></br>
-                                      Med {100 - significancelevel * 100}% sandsynlighed ligger den sande andel i
-                                      populationen, mellem{' '}
-                                      <span style={{ backgroundColor: '#80ff00' }}>{numberFormat4(lower * 100)}%</span>
-                                      og{' '}
-                                      <span style={{ backgroundColor: '#80ff00' }}>{numberFormat4(upper * 100)}%</span>
+                                      <MathJax>
+                                        Konfidensintervallet angiver i hvilket interval den sande middelværdi i &mu;
+                                        populationen ligger med en vis sandsynlighed.<br></br>
+                                        Den nedre grænse for konfidensintervallet kan beregnes som{' '}
+                                        {numberFormat4(lower)}, og den øvre grænse for konfidensintervallet kan beregnes
+                                        som {numberFormat4(upper)}
+                                        <br></br>
+                                        Med {100 - significancelevel * 100}% sandsynlighed ligger den sande andel i
+                                        populationen, mellem{' '}
+                                        <span style={{ backgroundColor: '#80ff00' }}>{numberFormat4(lower)}</span>
+                                        og <span style={{ backgroundColor: '#80ff00' }}>{numberFormat4(upper)}</span>
+                                      </MathJax>
                                     </p>
                                   </div>
                                 </div>
@@ -1019,12 +981,14 @@ export default function Mean() {
                                             <p style={{ textAlign: 'left' }}>
                                               Vi benytter hypotesetest med to-sidet alternativ hypotese H<sub>1</sub>,
                                               når vi kan ende med at forkaste nulhypotesen H<sub>0</sub> af 2 årsager,
-                                              hvis andelen i stikprøven er signifikant mindre end eller signifikant
-                                              større end {numberFormat4(100 * p)}%
+                                              hvis gennemsnittet i stikprøven er signifikant mindre end eller
+                                              signifikant større end {numberFormat4(c)}.
                                               <br />
                                               Vi benytter dette test, hvis vi skal teste:<br></br>
-                                              Er andelen p lig med dvs. = {numberFormat4(100 * p)}%<br></br>
-                                              Er andelen p forskellig fra dvs. ≠ {numberFormat4(100 * p)}%<br></br>
+                                              Er middelværdien &mu; lig med dvs. = {numberFormat4(c)}
+                                              <br></br>
+                                              Er middelværdien &mu; forskellig fra dvs. ≠ {numberFormat4(c)}
+                                              <br></br>
                                             </p>
                                           </Tooltip>
                                         }
@@ -1032,20 +996,25 @@ export default function Mean() {
                                         <i class="fas fa-question-circle"></i>
                                       </OverlayTrigger>
                                     </h5>
-                                    <hr></hr>H<sub>0</sub>: p = {numberFormat4(c)}%<br></br>H<sub>1</sub>: p ≠{' '}
-                                    {numberFormat4(c)}%<br></br>
+                                    <hr></hr>H<sub>0</sub>: &mu; = {numberFormat4(c)}
+                                    <br></br>H<sub>1</sub>: &mu; ≠ {numberFormat4(c)}
+                                    <br></br>
                                     {+pv2 > significancelevel && (
                                       <p>
                                         Da p-værdien/signifikanssandsynligheden {numberFormat4(100 * pv2)}% er større
                                         end 5% signifikansniveauet, kan vi ikke afvise nulhypotesen H<sub>0</sub>.
-                                        <br></br>H<sub>0</sub>: p = {numberFormat4(c)}% dvs. andelen i populationen p er
-                                        lig med {numberFormat4(c)}%<br></br>
+                                        <br></br>
+                                        <FontAwesomeIcon icon={faCheckCircle} size="1x" color="white" beat /> H
+                                        <sub>0</sub>: &mu; = {numberFormat4(c)} dvs. middelværdien i populationen er lig
+                                        med {numberFormat4(c)}
+                                        <br></br>
+                                        <FontAwesomeIcon icon={faXmarkCircle} size="1x" color="white" shake />{' '}
                                         <s>
-                                          H<sub>1</sub>: p ≠ {numberFormat4(c)}% dvs. andelen i populationen p er
-                                          forskellig fra {numberFormat4(c)}%
+                                          H<sub>1</sub>: &mu; ≠ {numberFormat4(c)} dvs. middelværdien i populationen er
+                                          forskellig fra {numberFormat4(c)}
                                         </s>
                                         <br></br>
-                                        Vi kan således ikke afvise at den sande andel i populationen p er{' '}
+                                        Vi kan således ikke afvise at den sande middelværdi i populationen &mu; er{' '}
                                         {numberFormat4(c)}
                                         %.
                                       </p>
@@ -1055,16 +1024,21 @@ export default function Mean() {
                                         Da p-værdien/signifikanssandsynligheden {numberFormat4(100 * pv2)}% er mindre
                                         end 5% signifikansniveauet, kan vi afvise H<sub>0</sub>.<br></br>
                                         <s>
-                                          H<sub>0</sub>: p = {numberFormat4(c)}% dvs. andelen i populationen p er lig
-                                          med {numberFormat4(c)}%
+                                          <FontAwesomeIcon icon={faXmarkCircle} size="1x" color="white" shake /> H
+                                          <sub>0</sub>: &mu; = {numberFormat4(c)} dvs. middelværdien i populationen er
+                                          lig med {numberFormat4(c)}%
                                         </s>
-                                        <br></br>H<sub>1</sub>: p ≠ {numberFormat4(c)}% dvs. andelen i populationen p er
-                                        forskellig fra {numberFormat4(c)}%<br></br>
-                                        Vi afviser derfor at den sande andel i populationen p er {numberFormat4(c)}
+                                        <br></br>
+                                        <FontAwesomeIcon icon={faCheckCircle} size="1x" color="white" beat /> H
+                                        <sub>1</sub>: &mu; ≠ {numberFormat4(c)} dvs. middelværdien &mu; i populationen
+                                        er forskellig fra {numberFormat4(c)}
+                                        <br></br>
+                                        Vi afviser derfor at den sande middelværdi i populationen &mu; er{' '}
+                                        {numberFormat4(c)}
                                         %.
                                         <br></br>
-                                        Der er statistisk belæg, for at konkludere at andelen i populationen p er
-                                        forskellig fra {numberFormat4(c)}
+                                        Der er statistisk belæg, for at konkludere at middelværdien i populationen &mu;
+                                        er forskellig fra {numberFormat4(c)}
                                         %.
                                       </p>
                                     )}
@@ -1086,13 +1060,12 @@ export default function Mean() {
                                             <p style={{ textAlign: 'left' }}>
                                               Vi benytter hypotesetest med 1-sidet alternativ hypotese H<sub>1</sub>{' '}
                                               opad, når vi kan ende med at forkaste nulhypotesen H<sub>0</sub> af 1
-                                              årsag, hvis andelen i stikprøven er signifikant større end{' '}
-                                              {numberFormat4(100 * p)}%
+                                              årsag, hvis gennemsnittet i stikprøven er signifikant større end {c}
                                               <br />
                                               Vi benytter dette test, hvis vi skal teste:<br></br>
-                                              Er andelen p højst eller maksimalt dvs. ≤ {numberFormat4(100 * p)}%
+                                              Er middelværdien højst eller maksimalt dvs. ≤ {c}
                                               <br></br>
-                                              Er andelen p større end dvs. &gt; {numberFormat4(100 * p)}%
+                                              Er middelværdien større end dvs. &gt; {c}
                                             </p>
                                           </Tooltip>
                                         }
@@ -1100,22 +1073,26 @@ export default function Mean() {
                                         <i class="fas fa-question-circle"></i>
                                       </OverlayTrigger>
                                     </h5>
-                                    <hr></hr>H<sub>0</sub>: p ≤ {numberFormat4(c)}%<br></br>H<sub>1</sub>: p &gt;{' '}
-                                    {numberFormat4(c)}%<br></br>
+                                    <hr></hr>H<sub>0</sub>: &mu; ≤ {numberFormat4(c)}
+                                    <br></br>H<sub>1</sub>: &mu; &gt; {numberFormat4(c)}
+                                    <br></br>
                                     {+pv1op > significancelevel && (
                                       <p>
                                         Da p-værdien/signifikanssandsynligheden {numberFormat4(100 * pv1op)}% er større
                                         end 5% signifikansniveauet, kan vi ikke afvise nulhypotesen H<sub>0</sub>.
-                                        <br></br>H<sub>0</sub>: p ≤ {numberFormat4(c)}% dvs. andelen i populationen p
-                                        højst er {numberFormat4(c)}%<br></br>
+                                        <br></br>
+                                        <FontAwesomeIcon icon={faCheckCircle} size="1x" color="white" beat /> H
+                                        <sub>0</sub>: &mu; ≤ {numberFormat4(c)} dvs. middelværdien i populationen &mu;
+                                        højst er {numberFormat4(c)}
+                                        <br></br>
                                         <s>
-                                          H<sub>1</sub>: p &gt; {numberFormat4(c)}% dvs. andelen i populationen p er
-                                          større end {numberFormat4(c)}%
+                                          <FontAwesomeIcon icon={faXmarkCircle} size="1x" color="white" shake /> H
+                                          <sub>1</sub>: &mu; &gt; {numberFormat4(c)} dvs. middelværdien i populationen
+                                          &mu; er større end {numberFormat4(c)}.
                                         </s>
                                         <br></br>
-                                        Vi kan således ikke afvise at den sande andel i populationen p højst er{' '}
-                                        {numberFormat4(c)}
-                                        %.
+                                        Vi kan således ikke afvise at den sande middelværdi i populationen &mu; højst er{' '}
+                                        {numberFormat4(c)}.
                                       </p>
                                     )}
                                     {+pv1op <= significancelevel && (
@@ -1123,18 +1100,19 @@ export default function Mean() {
                                         Da p-værdien/signifikanssandsynligheden {numberFormat4(100 * pv1op)}% er mindre
                                         end 5% signifikansniveauet, kan vi afvise H<sub>0</sub>.<br></br>
                                         <s>
-                                          H<sub>0</sub>: p ≤ {numberFormat4(c)}% dvs. andelen i populationen p højst er{' '}
-                                          {numberFormat4(c)}%
+                                          <FontAwesomeIcon icon={faXmarkCircle} size="1x" color="white" shake /> H
+                                          <sub>0</sub>: &mu; ≤ {numberFormat4(c)} dvs. middelværdien i populationen &mu;
+                                          højst er {numberFormat4(c)}.
                                         </s>
-                                        <br></br>H<sub>1</sub>: p &gt; {numberFormat4(c)}% dvs. andelen i populationen p
-                                        er større end {numberFormat4(c)}%<br></br>
-                                        Vi afviser derfor at den sande andel i populationen p højst er{' '}
-                                        {numberFormat4(c)}
-                                        %.
                                         <br></br>
-                                        Der er statistisk belæg, for at konkludere at andelen i populationen p er større
-                                        en {numberFormat4(c)}
-                                        %.
+                                        <FontAwesomeIcon icon={faCheckCircle} size="1x" color="white" beat /> H
+                                        <sub>1</sub>: &mu; &gt; {numberFormat4(c)} dvs. middelværdien i populationen
+                                        &mu; er større end {numberFormat4(c)}
+                                        <br></br>
+                                        Vi afviser derfor at den sande andel i populationen &mu; højst er{' '}
+                                        {numberFormat4(c)}.<br></br>
+                                        Der er statistisk belæg, for at konkludere at middelværdien i populationen &mu;
+                                        er større en {numberFormat4(c)}.
                                       </p>
                                     )}
                                   </p>
@@ -1155,13 +1133,13 @@ export default function Mean() {
                                             <p style={{ textAlign: 'left' }}>
                                               Vi benytter hypotesetest med 1-sidet alternativ hypotese H<sub>1</sub>{' '}
                                               nedad, når vi kan ende med at forkaste nulhypotesen H<sub>0</sub> af 1
-                                              årsag, hvis andelen i stikprøven er signifikant større end{' '}
-                                              {numberFormat4(100 * p)}%
+                                              årsag, hvis gennemsnittet i stikprøven er signifikant større end{' '}
+                                              {numberFormat4(c)}
                                               <br />
                                               Vi benytter dette test, hvis vi skal teste:<br></br>
-                                              Er andelen p mindst eller minimum dvs. ≥ {numberFormat4(100 * p)}%
+                                              Er middelværdien &mu; mindst eller minimum dvs. ≥ {numberFormat4(c)}
                                               <br></br>
-                                              Er andelen p mindre end dvs. &lt; {numberFormat4(100 * p)}%
+                                              Er middelværdien &mu; mindre end dvs. &lt; {numberFormat4(c)}
                                             </p>
                                           </Tooltip>
                                         }
@@ -1169,23 +1147,27 @@ export default function Mean() {
                                         <i class="fas fa-question-circle"></i>
                                       </OverlayTrigger>
                                     </h5>
-                                    <hr></hr>H<sub>0</sub>: p ≥ {numberFormat4(c)}%<br></br>H<sub>1</sub>: p &lt;{' '}
-                                    {numberFormat4(c)}%<br></br>
+                                    <hr></hr>H<sub>0</sub>: &mu; ≥ {numberFormat4(c)}
+                                    <br></br>H<sub>1</sub>: &mu; &lt; {numberFormat4(c)}
+                                    <br></br>
                                     {+pv1ned > significancelevel && (
                                       <p>
                                         Da p-værdien/signifikanssandsynligheden {numberFormat4(100 * pv1ned)}% er større
                                         end 5% signifikansniveauet, kan vi ikke afvise nulhypotesen H<sub>0</sub>.
-                                        <br></br>H<sub>0</sub>: p ≥ {numberFormat4(c)}% dvs. andelen i populationen p
-                                        mindst er {numberFormat4(c)}%<br></br>
+                                        <br></br>
+                                        <FontAwesomeIcon icon={faCheckCircle} size="1x" color="white" beat /> H
+                                        <sub>0</sub>: &mu; ≥ {numberFormat4(c)} dvs. middelværdien i populationen &mu;
+                                        mindst er {numberFormat4(c)}
+                                        <br></br>
                                         <s>
-                                          H<sub>1</sub>: p &lt; {numberFormat4(c)}% dvs. andelen i populationen p er
-                                          mindre end {numberFormat4(c)}%
+                                          <FontAwesomeIcon icon={faXmarkCircle} size="1x" color="white" shake /> H
+                                          <sub>1</sub>: &mu; &lt; {numberFormat4(c)} dvs. middelværdien i populationen p
+                                          er mindre end {numberFormat4(c)}
                                         </s>
                                         <br></br>
                                         <br></br>
-                                        Vi kan således ikke afvise at den sande andel i populationen p mindst er{' '}
-                                        {numberFormat4(c)}
-                                        %.
+                                        Vi kan således ikke afvise at den sande middelværdi i populationen &mu; mindst
+                                        er {numberFormat4(c)}.
                                       </p>
                                     )}
                                     {+pv1ned <= significancelevel && (
@@ -1193,19 +1175,20 @@ export default function Mean() {
                                         Da p-værdien/signifikanssandsynligheden {numberFormat4(100 * pv1ned)}% er mindre
                                         end 5% signifikansniveauet, kan vi afvise H<sub>0</sub>.<br></br>
                                         <s>
-                                          H<sub>0</sub>: p ≥ {numberFormat4(c)}% dvs. andelen i populationen p mindst er{' '}
-                                          {numberFormat4(c)}%
+                                          <FontAwesomeIcon icon={faXmarkCircle} size="1x" color="white" shake /> H
+                                          <sub>0</sub>: &mu; ≥ {numberFormat4(c)} dvs. middelværdien i populationen &mu;
+                                          mindst er {numberFormat4(c)}
                                         </s>
-                                        <br></br>H<sub>1</sub>: p &lt; {numberFormat4(c)}% dvs. andelen i populationen p
-                                        er mindre end {numberFormat4(c)}%<br></br>
                                         <br></br>
-                                        Vi afviser derfor at den sande andel i populationen p mindst er{' '}
-                                        {numberFormat4(c)}
-                                        %.
+                                        <FontAwesomeIcon icon={faCheckCircle} size="1x" color="white" beat /> H
+                                        <sub>1</sub>: &mu; &lt; {numberFormat4(c)} dvs. middelværdien i populationen
+                                        &mu; er mindre end {numberFormat4(c)}
                                         <br></br>
-                                        Der er statistisk belæg, for at konkludere at andelen i populationen p er mindre
-                                        end {numberFormat4(c)}
-                                        %.
+                                        <br></br>
+                                        Vi afviser derfor at den sande middelværdi i populationen &mu; mindst er{' '}
+                                        {numberFormat4(c)}.<br></br>
+                                        Der er statistisk belæg, for at konkludere at middelværdien i populationen &mu;
+                                        er mindre end {numberFormat4(c)}.
                                       </p>
                                     )}
                                   </p>
@@ -1244,7 +1227,7 @@ export default function Mean() {
                                                     <div>
                                                       <MathJax dynamic>
                                                         Punktestimatet kan udregnes til:
-                                                        <span>{`$$\\hat{p} = \\frac{succeser}{n} = \\frac{${a}}{${b}} \\approx ${numberFormat4(
+                                                        <span>{`$$\\bar{x} = \\hat{\\mu} = \\frac{succeser}{n} = \\frac{${a}}{${b}} \\approx ${numberFormat4(
                                                           p
                                                         )}$$`}</span>
                                                         <hr></hr>
@@ -1264,7 +1247,7 @@ export default function Mean() {
                                                             significancelevel / 2
                                                           }}=z_{${1 - significancelevel / 2}}=$`}{' '}
                                                           {numberFormat4(q2)} er {100 * (1 - significancelevel / 2)}%
-                                                          fraktilen for z-fordelingen dvs. standard normalfordelingen.
+                                                          fraktilen for t-fordelingen dvs. standard normalfordelingen.
                                                         </span>
                                                         <span>{`$$ ${numberFormat4(p)} \\pm ${numberFormat4(
                                                           q2
@@ -1275,7 +1258,7 @@ export default function Mean() {
                                                           upper * 100
                                                         )}\\%]$$`}</span>
                                                         Vi kan med {(1 - significancelevel) * 100}% sandsynlighed sige
-                                                        at andelen i populationen ligger mellem{' '}
+                                                        at middelværdien i populationen ligger mellem{' '}
                                                         {numberFormat4(lower * 100)}% og {numberFormat4(upper * 100)}%
                                                         <hr></hr>
                                                         Fejlmarginen er den halve længde af konfidensintervallet dvs.
@@ -1301,23 +1284,24 @@ export default function Mean() {
                                                         </span>
                                                         <hr></hr>
                                                         Hvis vi ikke kan afvise nulhypotesen, betyder det at den sande
-                                                        populations parameter {`$p=p_{0}$`}. Så gælder fra CLT, at
+                                                        populations parameter {`$\\mu=\\mu_{0}$`}. Så gælder fra CLT, at
                                                         stikprøvefordelingen er normalfordelt med middelværdi{' '}
-                                                        {`$\\mu=p_{0}$`}.<br></br>
-                                                        For at finde Z-teststørrelsen, skal vi bestemme standardfejlen
-                                                        for andele SE ved formlen herunder, hvor {`$p_{0}=${c}$`}% er
-                                                        den andel vi tester under nulhypotesen {`$H_{0}$`}:
+                                                        {`$\\mu=\\mu_{0}$`}.<br></br>
+                                                        For at finde t-teststørrelsen, skal vi bestemme standardfejlen
+                                                        for middelværdien SE ved formlen herunder, hvor{' '}
+                                                        {`$&mu;_{0}=${c}$`} er den middelværdi vi tester under
+                                                        nulhypotesen {`$H_{0}$`}:
                                                         <span>
-                                                          {`$$SE = \\sqrt{\\frac{p_{0}(1-p_{0})}{n}}=\\sqrt{\\frac{${
+                                                          {`$$SE = \\sqrt{\\frac{\\mu_{0}(1-\\mu_{0})}{n}}=\\sqrt{\\frac{${
                                                             c / 100
                                                           }(1-${c / 100})}{${b}}}\\approx ${numberFormat4(
                                                             Math.pow(((c / 100) * (1 - c / 100)) / b, 0.5)
                                                           )}$$`}
                                                         </span>
-                                                        Z-teststørrelsen angiver forskellen mellem {`$\\hat{p}$`} og{' '}
+                                                        t-teststørrelsen angiver forskellen mellem {`$\\hat{p}$`} og{' '}
                                                         {`$p_{0}$`}, divideret med SE for at vi kan benytte
-                                                        z-fordelingen:
-                                                        <span>{`$$Z-teststørrelsen = \\frac{\\hat{p}-p_{0}}{SE} \\approx \\frac{${numberFormat4(
+                                                        t-fordelingen:
+                                                        <span>{`$$t-teststørrelsen = \\frac{\\hat{p}-p_{0}}{SE} \\approx \\frac{${numberFormat4(
                                                           p
                                                         )}-${c / 100}}{${numberFormat4(
                                                           Math.pow(((c / 100) * (1 - c / 100)) / b, 0.5)

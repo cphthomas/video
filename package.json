@@ -8,6 +8,8 @@
     "@fortawesome/free-brands-svg-icons": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.1.18",
+    "@stdlib/stats-base-dists-chisquare": "^0.0.6",
+    "@stdlib/stats-base-dists-chisquare-cdf": "^0.0.6",
     "@stdlib/stats-base-dists-normal-cdf": "^0.0.6",
     "@stdlib/stats-base-dists-normal-quantile": "^0.0.6",
     "@stdlib/stdlib": "^0.0.96",

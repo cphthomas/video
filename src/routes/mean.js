@@ -27,10 +27,12 @@ require('highcharts/modules/annotations')(Highcharts);
 
 // var cdf = require('@stdlib/stats-base-dists-normal-cdf');
 // var pdf = require('@stdlib/stats/base/dists/normal/pdf');
-var quantile = require('@stdlib/stats/base/dists/normal/quantile');
+// var quantile = require('@stdlib/stats/base/dists/normal/quantile');
 var cdft = require('@stdlib/stats/base/dists/t/cdf');
 var pdft = require('@stdlib/stats/base/dists/t/pdf');
 var quantilet = require('@stdlib/stats/base/dists/t/quantile');
+var cdfchi = require('@stdlib/stats-base-dists-chisquare-cdf');
+var quantilechi = require('@stdlib/stats/base/dists/chisquare/quantile');
 
 const config = {
   loader: { load: ['[tex]/html'] },
@@ -51,6 +53,7 @@ export default function Mean() {
   var [a, seta] = useState(+(10).toFixed(2)); //middelværdi
   var [b, setb] = useState(+(50).toFixed(2)); //stikprøvestørrelse
   var [c, setc] = useState(+(10.5).toFixed(2)); //test middel
+  var [e, sete] = useState(+(2.2).toFixed(2)); //test standardafvigelse
   var [std, setstd] = useState(+(2).toFixed(2)); //standardafvigelse
   var [f, setf] = useState(+(b * 10).toFixed(2)); //
   var [sig, setsig] = useState(['5% signifikansniveau']);
@@ -71,6 +74,8 @@ export default function Mean() {
   var colordummy6 = show6 ? 'danger' : 'primary';
   var [show7, setShow7] = useState(false);
   var colordummy7 = show7 ? 'danger' : 'primary';
+  var [show8, setShow8] = useState(false);
+  var colordummy8 = show8 ? 'danger' : 'primary';
 
   var significancelevel = 0.05;
   if (sig === '5% signifikansniveau') {
@@ -111,6 +116,12 @@ export default function Mean() {
   var pv1op = 1 - cdft(ztest, b - 1);
   var pv2 = 2 * Math.min(+pv1ned, +pv1op);
   var factor = 1;
+  var chitest = ((b - 1) * Math.pow(std, 2)) / Math.pow(e, 2);
+  var chipvned = cdfchi(chitest, b - 1);
+  var chipvop = 1 - cdfchi(chitest, b - 1);
+  var chipv2 = 2 * Math.min(+chipvned, +chipvop);
+  var lowersigma = Math.pow(((+b - 1) * Math.pow(+std, 2)) / quantilechi(1 - significancelevel / 2, b - 1), 0.5);
+  var uppersigma = Math.pow(((+b - 1) * Math.pow(+std, 2)) / quantilechi(significancelevel / 2, b - 1), 0.5);
 
   Math.abs(ztest) < 5 ? (factor = 1) : (factor = Math.abs(ztest / 5));
 
@@ -650,9 +661,9 @@ export default function Mean() {
                       </OverlayTrigger>
                     </span>
                     <p class="lead text-muted">
-                      percentile {percentile} og stdev {stdev} og quantile {quantile(0.025, b - 1)} og quantilet{' '}
-                      {quantilet(0.025, b - 1)} og pdft {pdft(0.01, b - 1)} og cdft {cdft(-1.96, b - 1)} og b {b}Analyse
-                      af en kvantitativ variabel, tests af middel og standardafvigelse
+                      lowersigma = {numberFormat4(lowersigma)} og uppersigma = {uppersigma} og quantilechi(0.05, 49) ={' '}
+                      {quantilechi(0.05, 49)}
+                      <br></br>Analyse af en kvantitativ variabel, tests af middel og standardafvigelse
                     </p>
 
                     {/* Signifikansniveau########################################################################################################################################################################################## */}
@@ -699,11 +710,7 @@ export default function Mean() {
                     {/* Stikprøvegennemsnittet og størrelsen########################################################################################################################################################################################################################### */}
                     <Row>
                       <Col>
-                        <Form.Text className="text-muted">
-                          <MathJax>
-                            Stikprøve-gennemsnittet <span>{`$\\hat{\\mu}=\\bar{x}$`}</span>
-                          </MathJax>
-                        </Form.Text>
+                        <Form.Text className="text-muted">Stikprøve-gennemsnittet</Form.Text>
                         <InputGroup size="sm">
                           <OverlayTrigger
                             placement="auto"
@@ -741,11 +748,7 @@ export default function Mean() {
                       </Col>
                       <br></br>
                       <Col>
-                        <Form.Text className="text-muted">
-                          <MathJax>
-                            Stikprøvestørrelsen <span>{`$n$`}</span>
-                          </MathJax>
-                        </Form.Text>
+                        <Form.Text className="text-muted">Stikprøvestørrelsen</Form.Text>
                         <InputGroup size="sm">
                           <OverlayTrigger
                             placement="auto"
@@ -775,15 +778,11 @@ export default function Mean() {
                         </InputGroup>
                       </Col>
                     </Row>
-                    {/* STD test middel########################################################################################################################################################################################################################### */}
+                    {/*  stikprøvestd########################################################################################################################################################################################################################### */}
                     <Row>
                       <br></br>
                       <Col>
-                        <Form.Text className="text-muted">
-                          <MathJax>
-                            Standardafvigelsen <span>{`$\\hat{\\sigma}$`}</span>
-                          </MathJax>
-                        </Form.Text>
+                        <Form.Text className="text-muted">Standardafvigelsen</Form.Text>
                         <InputGroup size="sm">
                           <OverlayTrigger
                             placement="auto"
@@ -815,12 +814,13 @@ export default function Mean() {
                           </OverlayTrigger>
                         </InputGroup>
                       </Col>
+                      <Col></Col>
+                    </Row>
+
+                    <Row>
+                      {/*  test middel knap########################################################################################################################################################################################################################### */}
                       <Col>
-                        <Form.Text className="text-muted">
-                          <MathJax>
-                            Test af middelværdien <span>{`$\\mu$`}</span>
-                          </MathJax>
-                        </Form.Text>
+                        <Form.Text className="text-muted">Test af middelværdien &mu;</Form.Text>
                         <InputGroup size="sm">
                           <OverlayTrigger
                             placement="auto"
@@ -850,8 +850,39 @@ export default function Mean() {
                           </OverlayTrigger>
                         </InputGroup>
                       </Col>
+                      {/*  test standardafvigelsen knap########################################################################################################################################################################################################################### */}
+                      <Col>
+                        <Form.Text className="text-muted">Test af standardafvigelsen &sigma;</Form.Text>
+                        <InputGroup size="sm">
+                          <OverlayTrigger
+                            placement="auto"
+                            delay={{
+                              show: 100,
+                              hide: 100,
+                            }}
+                            overlay={
+                              <Tooltip>
+                                <MathJax>
+                                  Man kan ved tests sammenligne en standardafvigelse under en nulhypotese{' '}
+                                  <span>{`$\\sigma$ = ${e}`}</span> med standardafvigelsen fra stikprøven {std}.
+                                </MathJax>
+                              </Tooltip>
+                            }
+                          >
+                            <FormControl
+                              type="number"
+                              // max="-0.000000001"
+                              step={1}
+                              precision={0}
+                              //mobile={true}
+                              value={+e}
+                              onChange={(e) => sete(e.target.value)}
+                              placeholder="0"
+                            />
+                          </OverlayTrigger>
+                        </InputGroup>
+                      </Col>
                     </Row>
-
                     <Row></Row>
                     <hr></hr>
 
@@ -888,6 +919,7 @@ export default function Mean() {
                                         <span>{`$$\\frac{\\sum_{i=1}^{n}{x_{i}}}{n} = \\frac{\\sum_{i=1}^{${b}}{x_{i}}}{${b}}=\\frac{x_{1}+...+x_{${b}}}{${b}}=${a}
                                           
                                         $$`}</span>
+                                        <hr></hr>
                                         Vores bedste gæt på, også kaldet estimat for, den sande standardafvigelse i
                                         populationen er {std}. Dette estimat skrives <span>{`$\\hat{\\sigma}$`}</span>{' '}
                                         og udtales <i>sigma hat</i>.<br></br>Den sande ukendte standardafvigelse i
@@ -936,16 +968,28 @@ export default function Mean() {
                                     <div></div>
                                     <p class="card-text">
                                       <MathJax>
-                                        Konfidensintervallet angiver i hvilket interval den sande middelværdi i &mu;
+                                        Konfidensintervallet angiver, i hvilket interval den sande middelværdi i &mu;
                                         populationen ligger med en vis sandsynlighed.<br></br>
                                         Den nedre grænse for konfidensintervallet kan beregnes som{' '}
                                         {numberFormat4(lower)}, og den øvre grænse for konfidensintervallet kan beregnes
                                         som {numberFormat4(upper)}
                                         <br></br>
-                                        Med {100 - significancelevel * 100}% sandsynlighed ligger den sande andel i
-                                        populationen, mellem{' '}
-                                        <span style={{ backgroundColor: '#80ff00' }}>{numberFormat4(lower)}</span>
-                                        og <span style={{ backgroundColor: '#80ff00' }}>{numberFormat4(upper)}</span>
+                                        Med {100 - significancelevel * 100}% sandsynlighed ligger den sande middelværdi
+                                        i populationen, mellem{' '}
+                                        <span style={{ backgroundColor: '#80ff00' }}>{numberFormat4(lower)}</span> og{' '}
+                                        <span style={{ backgroundColor: '#80ff00' }}>{numberFormat4(upper)}</span>
+                                        <hr></hr>
+                                        Konfidensintervallet angiver, i hvilket interval den sande standardafvigelse i
+                                        &sigma; populationen ligger med en vis sandsynlighed.<br></br>
+                                        Den nedre grænse for konfidensintervallet kan beregnes som{' '}
+                                        {numberFormat4(lowersigma)}, og den øvre grænse for konfidensintervallet kan
+                                        beregnes som {numberFormat4(uppersigma)}
+                                        <br></br>
+                                        Med {100 - significancelevel * 100}% sandsynlighed ligger den sande
+                                        standardafvigelse i populationen, mellem{' '}
+                                        <span style={{ backgroundColor: '#80ff00' }}>{numberFormat4(lowersigma)}</span>{' '}
+                                        og{' '}
+                                        <span style={{ backgroundColor: '#80ff00' }}>{numberFormat4(uppersigma)}</span>
                                       </MathJax>
                                     </p>
                                   </div>
@@ -958,13 +1002,22 @@ export default function Mean() {
                       </Col>
                     </Row>
                     {/* ########################################################################################################################################################################################## */}
-                    {/* Hypoteser */}
+                    {/* Hypoteser Middelværdi*/}
                     <Row>
                       <Col class="col-6">
                         <Button variant={colordummy4} size="sm" onClick={() => setShow4(!show4)}>
-                          {show4 && 'Skjul Hypoteser'}
-                          {!show4 && 'Hypoteser'}
+                          {show4 && (
+                            <span>
+                              Skjul test middel <span style={{ color: 'white', textTransform: 'none' }}>&mu;</span>
+                            </span>
+                          )}
+                          {!show4 && (
+                            <span>
+                              Test middel <span style={{ color: 'white', textTransform: 'none' }}>&mu;</span>
+                            </span>
+                          )}
                         </Button>
+
                         <div>
                           {show4 && (
                             <div>
@@ -973,7 +1026,7 @@ export default function Mean() {
                                 <div class={+pv2 > significancelevel ? 'card-body bg-success' : 'card-body bg-danger'}>
                                   <p class="card-text text-white">
                                     <h5>
-                                      Hypotesetest med to-sidet alternativ hypotese{' '}
+                                      Hypotesetest &mu; med to-sidet alternativ hypotese{' '}
                                       <OverlayTrigger
                                         placement="auto"
                                         overlay={
@@ -1052,7 +1105,7 @@ export default function Mean() {
                                 >
                                   <p class="card-text text-white">
                                     <h5>
-                                      Hypotesetest med 1-sidet alternativ hypotese opad{' '}
+                                      Hypotesetest &mu; med 1-sidet alternativ hypotese opad{' '}
                                       <OverlayTrigger
                                         placement="auto"
                                         overlay={
@@ -1109,7 +1162,7 @@ export default function Mean() {
                                         <sub>1</sub>: &mu; &gt; {numberFormat4(c)} dvs. middelværdien i populationen
                                         &mu; er større end {numberFormat4(c)}
                                         <br></br>
-                                        Vi afviser derfor at den sande andel i populationen &mu; højst er{' '}
+                                        Vi afviser derfor at den sande middelværdi i populationen &mu; højst er{' '}
                                         {numberFormat4(c)}.<br></br>
                                         Der er statistisk belæg, for at konkludere at middelværdien i populationen &mu;
                                         er større en {numberFormat4(c)}.
@@ -1125,7 +1178,7 @@ export default function Mean() {
                                 >
                                   <p class="card-text text-white">
                                     <h5>
-                                      Hypotesetest med 1-sidet alternativ hypotese nedad{' '}
+                                      Hypotesetest &mu; med 1-sidet alternativ hypotese nedad{' '}
                                       <OverlayTrigger
                                         placement="auto"
                                         overlay={
@@ -1189,6 +1242,256 @@ export default function Mean() {
                                         {numberFormat4(c)}.<br></br>
                                         Der er statistisk belæg, for at konkludere at middelværdien i populationen &mu;
                                         er mindre end {numberFormat4(c)}.
+                                      </p>
+                                    )}
+                                  </p>
+                                </div>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      </Col>
+                    </Row>
+                    {/* ########################################################################################################################################################################################## */}
+                    {/* Hypoteser standardafvigelse*/}
+                    <Row>
+                      <Col class="col-6">
+                        <Button variant={colordummy8} size="sm" onClick={() => setShow8(!show8)}>
+                          {show8 && (
+                            <span>
+                              Skjul test standardafvigelse <span style={{ textTransform: 'none' }}>&sigma;</span>
+                            </span>
+                          )}
+                          {!show8 && (
+                            <span>
+                              Test standardafvigelse <span style={{ textTransform: 'none' }}> &sigma;</span>
+                            </span>
+                          )}
+                        </Button>
+
+                        <div>
+                          {show8 && (
+                            <div>
+                              <br></br>
+                              <div class="card">
+                                <div
+                                  class={+chipv2 > significancelevel ? 'card-body bg-success' : 'card-body bg-danger'}
+                                >
+                                  <p class="card-text text-white">
+                                    <h5>
+                                      Hypotesetest &sigma; med to-sidet alternativ hypotese{' '}
+                                      <OverlayTrigger
+                                        placement="auto"
+                                        overlay={
+                                          <Tooltip>
+                                            <p style={{ textAlign: 'left' }}>
+                                              Vi benytter hypotesetest med to-sidet alternativ hypotese H<sub>1</sub>,
+                                              når vi kan ende med at forkaste nulhypotesen H<sub>0</sub> af 2 årsager,
+                                              hvis standardafvigelsen i stikprøven her {numberFormat4(std)} er
+                                              signifikant mindre end eller signifikant større end {numberFormat4(e)}.
+                                              <br />
+                                              Vi benytter dette test, hvis vi skal teste:<br></br>
+                                              Er standardafvigelsen &sigma; lig med dvs. = {numberFormat4(e)}
+                                              <br></br>
+                                              Er standardafvigelsen &sigma; forskellig fra dvs. ≠ {numberFormat4(e)}
+                                              <br></br>
+                                            </p>
+                                          </Tooltip>
+                                        }
+                                      >
+                                        <i class="fas fa-question-circle"></i>
+                                      </OverlayTrigger>
+                                    </h5>
+                                    <hr></hr>H<sub>0</sub>: &sigma; = {numberFormat4(e)}
+                                    <br></br>H<sub>1</sub>: &sigma; ≠ {numberFormat4(e)}
+                                    <br></br>
+                                    {+chipv2 > significancelevel && (
+                                      <p>
+                                        Da p-værdien/signifikanssandsynligheden {numberFormat4(100 * chipv2)}% er større
+                                        end 5% signifikansniveauet, kan vi ikke afvise nulhypotesen H<sub>0</sub>.
+                                        <br></br>
+                                        <FontAwesomeIcon icon={faCheckCircle} size="1x" color="white" beat /> H
+                                        <sub>0</sub>: &sigma; = {numberFormat4(e)} dvs. standardafvigelsen i
+                                        populationen er lig med {numberFormat4(e)}
+                                        <br></br>
+                                        <FontAwesomeIcon icon={faXmarkCircle} size="1x" color="white" shake />{' '}
+                                        <s>
+                                          H<sub>1</sub>: &sigma; ≠ {numberFormat4(e)} dvs. standardafvigelsen i
+                                          populationen er forskellig fra {numberFormat4(e)}
+                                        </s>
+                                        <br></br>
+                                        Vi kan således ikke afvise at den sande standardafvigelse i populationen &sigma;
+                                        er {numberFormat4(e)}.
+                                      </p>
+                                    )}
+                                    {+chipv2 <= significancelevel && (
+                                      <p>
+                                        Da p-værdien/signifikanssandsynligheden {numberFormat4(100 * chipv2)}% er mindre
+                                        end 5% signifikansniveauet, kan vi afvise H<sub>0</sub>.<br></br>
+                                        <s>
+                                          <FontAwesomeIcon icon={faXmarkCircle} size="1x" color="white" shake /> H
+                                          <sub>0</sub>: &sigma; = {numberFormat4(e)} dvs. standardafvigelsen i
+                                          populationen er lig med {numberFormat4(e)}
+                                        </s>
+                                        <br></br>
+                                        <FontAwesomeIcon icon={faCheckCircle} size="1x" color="white" beat /> H
+                                        <sub>1</sub>: &sigma; ≠ {numberFormat4(e)} dvs. standardafvigelsen &sigma; i
+                                        populationen er forskellig fra {numberFormat4(e)}
+                                        <br></br>
+                                        Vi afviser derfor at den sande standardafvigelse i populationen &sigma; er{' '}
+                                        {numberFormat4(e)}.<br></br>
+                                        Der er statistisk belæg, for at konkludere at standardafvigelsen i populationen
+                                        &sigma; er forskellig fra {numberFormat4(e)}.
+                                      </p>
+                                    )}
+                                  </p>
+                                </div>
+                              </div>
+                              <br></br>
+                              <div class="card">
+                                <div
+                                  class={+chipvop > significancelevel ? 'card-body bg-success' : 'card-body bg-danger'}
+                                >
+                                  <p class="card-text text-white">
+                                    <h5>
+                                      Hypotesetest &sigma; med 1-sidet alternativ hypotese opad{' '}
+                                      <OverlayTrigger
+                                        placement="auto"
+                                        overlay={
+                                          <Tooltip>
+                                            <p style={{ textAlign: 'left' }}>
+                                              Vi benytter hypotesetest med 1-sidet alternativ hypotese H<sub>1</sub>{' '}
+                                              opad, når vi kan ende med at forkaste nulhypotesen H<sub>0</sub> af 1
+                                              årsag, hvis gennemsnittet i stikprøven er signifikant større end {e}
+                                              <br />
+                                              Vi benytter dette test, hvis vi skal teste:<br></br>
+                                              Er standardafvigelsen højst eller maksimalt dvs. ≤ {c}
+                                              <br></br>
+                                              Er standardafvigelsen større end dvs. &gt; {c}
+                                            </p>
+                                          </Tooltip>
+                                        }
+                                      >
+                                        <i class="fas fa-question-circle"></i>
+                                      </OverlayTrigger>
+                                    </h5>
+                                    <hr></hr>H<sub>0</sub>: &sigma; ≤ {numberFormat4(e)}
+                                    <br></br>H<sub>1</sub>: &sigma; &gt; {numberFormat4(e)}
+                                    <br></br>
+                                    {+chipvop > significancelevel && (
+                                      <p>
+                                        Da p-værdien/signifikanssandsynligheden {numberFormat4(100 * chipvop)}% er
+                                        større end 5% signifikansniveauet, kan vi ikke afvise nulhypotesen H<sub>0</sub>
+                                        .<br></br>
+                                        <FontAwesomeIcon icon={faCheckCircle} size="1x" color="white" beat /> H
+                                        <sub>0</sub>: &sigma; ≤ {numberFormat4(e)} dvs. standardafvigelsen i
+                                        populationen &sigma; højst er {numberFormat4(e)}
+                                        <br></br>
+                                        <s>
+                                          <FontAwesomeIcon icon={faXmarkCircle} size="1x" color="white" shake /> H
+                                          <sub>1</sub>: &sigma; &gt; {numberFormat4(e)} dvs. standardafvigelsen i
+                                          populationen &sigma; er større end {numberFormat4(e)}.
+                                        </s>
+                                        <br></br>
+                                        Vi kan således ikke afvise at den sande standardafvigelse i populationen &sigma;
+                                        højst er {numberFormat4(e)}.
+                                      </p>
+                                    )}
+                                    {+chipvop <= significancelevel && (
+                                      <p>
+                                        Da p-værdien/signifikanssandsynligheden {numberFormat4(100 * chipvop)}% er
+                                        mindre end 5% signifikansniveauet, kan vi afvise H<sub>0</sub>.<br></br>
+                                        <s>
+                                          <FontAwesomeIcon icon={faXmarkCircle} size="1x" color="white" shake /> H
+                                          <sub>0</sub>: &sigma; ≤ {numberFormat4(e)} dvs. standardafvigelsen i
+                                          populationen &sigma; højst er {numberFormat4(e)}.
+                                        </s>
+                                        <br></br>
+                                        <FontAwesomeIcon icon={faCheckCircle} size="1x" color="white" beat /> H
+                                        <sub>1</sub>: &sigma; &gt; {numberFormat4(e)} dvs. standardafvigelsen i
+                                        populationen &sigma; er større end {numberFormat4(e)}
+                                        <br></br>
+                                        Vi afviser derfor at den sande standardafvigelse i populationen &sigma; højst er{' '}
+                                        {numberFormat4(e)}.<br></br>
+                                        Der er statistisk belæg, for at konkludere at standardafvigelsen i populationen
+                                        &sigma; er større en {numberFormat4(e)}.
+                                      </p>
+                                    )}
+                                  </p>
+                                </div>
+                              </div>
+                              <br></br>
+                              <div class="card">
+                                <div
+                                  class={+chipvned > significancelevel ? 'card-body bg-success' : 'card-body bg-danger'}
+                                >
+                                  <p class="card-text text-white">
+                                    <h5>
+                                      Hypotesetest &sigma; med 1-sidet alternativ hypotese nedad{' '}
+                                      <OverlayTrigger
+                                        placement="auto"
+                                        overlay={
+                                          <Tooltip>
+                                            <p style={{ textAlign: 'left' }}>
+                                              Vi benytter hypotesetest med 1-sidet alternativ hypotese H<sub>1</sub>{' '}
+                                              nedad, når vi kan ende med at forkaste nulhypotesen H<sub>0</sub> af 1
+                                              årsag, hvis gennemsnittet i stikprøven er signifikant større end{' '}
+                                              {numberFormat4(e)}
+                                              <br />
+                                              Vi benytter dette test, hvis vi skal teste:<br></br>
+                                              Er standardafvigelsen &sigma; mindst eller minimum dvs. ≥{' '}
+                                              {numberFormat4(e)}
+                                              <br></br>
+                                              Er standardafvigelsen &sigma; mindre end dvs. &lt; {numberFormat4(e)}
+                                            </p>
+                                          </Tooltip>
+                                        }
+                                      >
+                                        <i class="fas fa-question-circle"></i>
+                                      </OverlayTrigger>
+                                    </h5>
+                                    <hr></hr>H<sub>0</sub>: &sigma; ≥ {numberFormat4(e)}
+                                    <br></br>H<sub>1</sub>: &sigma; &lt; {numberFormat4(e)}
+                                    <br></br>
+                                    {+chipvned > significancelevel && (
+                                      <p>
+                                        Da p-værdien/signifikanssandsynligheden {numberFormat4(100 * chipvned)}% er
+                                        større end 5% signifikansniveauet, kan vi ikke afvise nulhypotesen H<sub>0</sub>
+                                        .<br></br>
+                                        <FontAwesomeIcon icon={faCheckCircle} size="1x" color="white" beat /> H
+                                        <sub>0</sub>: &sigma; ≥ {numberFormat4(e)} dvs. standardafvigelsen i
+                                        populationen &sigma; mindst er {numberFormat4(e)}
+                                        <br></br>
+                                        <s>
+                                          <FontAwesomeIcon icon={faXmarkCircle} size="1x" color="white" shake /> H
+                                          <sub>1</sub>: &sigma; &lt; {numberFormat4(e)} dvs. standardafvigelsen i
+                                          populationen p er mindre end {numberFormat4(e)}
+                                        </s>
+                                        <br></br>
+                                        <br></br>
+                                        Vi kan således ikke afvise at den sande standardafvigelse i populationen &sigma;
+                                        mindst er {numberFormat4(e)}.
+                                      </p>
+                                    )}
+                                    {+chipvned <= significancelevel && (
+                                      <p>
+                                        Da p-værdien/signifikanssandsynligheden {numberFormat4(100 * chipvned)}% er
+                                        mindre end 5% signifikansniveauet, kan vi afvise H<sub>0</sub>.<br></br>
+                                        <s>
+                                          <FontAwesomeIcon icon={faXmarkCircle} size="1x" color="white" shake /> H
+                                          <sub>0</sub>: &sigma; ≥ {numberFormat4(e)} dvs. standardafvigelsen i
+                                          populationen &sigma; mindst er {numberFormat4(e)}
+                                        </s>
+                                        <br></br>
+                                        <FontAwesomeIcon icon={faCheckCircle} size="1x" color="white" beat /> H
+                                        <sub>1</sub>: &sigma; &lt; {numberFormat4(e)} dvs. standardafvigelsen i
+                                        populationen &sigma; er mindre end {numberFormat4(e)}
+                                        <br></br>
+                                        <br></br>
+                                        Vi afviser derfor at den sande standardafvigelse i populationen &sigma; mindst
+                                        er {numberFormat4(e)}.<br></br>
+                                        Der er statistisk belæg, for at konkludere at standardafvigelsen i populationen
+                                        &sigma; er mindre end {numberFormat4(e)}.
                                       </p>
                                     )}
                                   </p>
@@ -1289,7 +1592,7 @@ export default function Mean() {
                                                         {`$\\mu=\\mu_{0}$`}.<br></br>
                                                         For at finde t-teststørrelsen, skal vi bestemme standardfejlen
                                                         for middelværdien SE ved formlen herunder, hvor{' '}
-                                                        {`$&mu;_{0}=${c}$`} er den middelværdi vi tester under
+                                                        {`$\\mu_{0}=${c}$`} er den middelværdi vi tester under
                                                         nulhypotesen {`$H_{0}$`}:
                                                         <span>
                                                           {`$$SE = \\sqrt{\\frac{\\mu_{0}(1-\\mu_{0})}{n}}=\\sqrt{\\frac{${

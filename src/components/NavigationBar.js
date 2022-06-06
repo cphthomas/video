@@ -77,8 +77,8 @@ export const NavigationBar = () => (
                 </Dropdown.Item>
 
                 <Dropdown.Divider />
-                <Dropdown.Item size="sm" href="/mean" target="_blank">
-                  Middelværdi
+                <Dropdown.Item size="sm" href="/meanraw" target="_blank">
+                  Middelværdi rådata
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>

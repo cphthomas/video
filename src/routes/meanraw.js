@@ -13,7 +13,6 @@ import { std, min, max, median, quantileSeq, sum } from 'mathjs';
 import MLR from 'ml-regression-multivariate-linear';
 
 var a = 23;
-var b = 23;
 
 const config = {
   loader: { load: ['[tex]/html'] },
@@ -36,21 +35,19 @@ const numberFormat4 = (value) =>
     maximumFractionDigits: 4,
   }).format(value);
 
-const data2 = [
-  [1, 2, 2],
-  [2, 10, 11],
-  [3, 20, 11],
-  [4, 30, 15],
-  [5, 33, 15],
-  [6, 30, 15],
-  [7, 30, 15],
-  [8, 30, 15],
-  [9, 30, 15],
-  [10, 30, 15],
-];
-
 const hotSettings = {
-  data: data2,
+  data: [
+    [1, 2, 2],
+    [2, 10, 11],
+    [3, 20, 11],
+    [4, 30, 15],
+    [5, 33, 15],
+    [6, 30, 15],
+    [7, 30, 15],
+    [8, 30, 15],
+    [9, 30, 15],
+    [10, 30, 15],
+  ],
   colHeaders: ['var1', 'var2', 'var3'],
 
   height: 'auto',
@@ -79,6 +76,21 @@ export default function Meanraw() {
   // Y0 = X0 * 2, Y1 = X1 * 2, Y2 = X0 + X1
   const y = [[1], [2], [4], [6], [8]];
   const mlr = new MLR(x, y);
+  var tstats = mlr.tStats;
+  var stderrors = mlr.stdErrors;
+
+  let MatrixProd = (A, B) =>
+    A.map((row, i) => B[0].map((_, j) => row.reduce((acc, _, n) => acc + A[i][n] * B[n][j], 0)));
+
+  function dimension(element) {
+    return [element.length, element[0].length];
+  }
+  function transpose(matrix) {
+    return matrix[0].map((col, i) => matrix.map((row) => row[i]));
+  }
+  var residuals = [].concat
+    .apply([], MatrixProd(x, mlr.weights))
+    .map((n) => n + mlr.weights[mlr.weights.length - 1][0]);
 
   useEffect(() => {}, [hotTableComponent]);
 
@@ -131,6 +143,36 @@ export default function Meanraw() {
                             rowHeaders={true}
                           />
                           <hr></hr>
+                          dimension(residuals)=
+                          {dimension(residuals)}
+                          <br></br>
+                          residuals {residuals}
+                          <br></br>
+                          flatten-intercept ={' '}
+                          {[].concat
+                            .apply([], MatrixProd(x, mlr.weights))
+                            .map((n) => n + mlr.weights[mlr.weights.length - 1][0])}
+                          <br></br>
+                          flatten-intercept numberFormat4={' '}
+                          {[].concat
+                            .apply([], MatrixProd(x, mlr.weights))
+                            .map((n) => numberFormat4(n + mlr.weights[2][0]))}
+                          <br></br>
+                          <br></br>
+                          flatten = {[].concat.apply([], MatrixProd(x, mlr.weights))}
+                          <br></br>
+                          <br></br>x = {x}
+                          <br></br>
+                          transpose(x) {transpose(x)}
+                          <br></br>
+                          x[2] = {x[2]}
+                          <br></br>
+                          <br></br>x {x}
+                          <br></br>
+                          x[0][1] = {x[0][1]}
+                          <br></br>
+                          x[0][0] = {x[0][0]}
+                          <hr></hr>
                           <br></br>
                           mlr.predict([3, 3]) {mlr.predict([3, 3])}
                           <br></br>
@@ -138,18 +180,23 @@ export default function Meanraw() {
                           <br></br>
                           mlr.rSquared {mlr.rSquared}
                           <br></br>
+                          tstats = {tstats}
+                          <br></br>
+                          {/* rs = {rs} */}
+                          <br></br>
                           mlr.tStats {mlr.tStats}
                           <br></br>
                           <br></br>
-                          mlr.predict([1, 1]) {mlr.predict([1, 1])}
+                          mlr.predict([1, 1]) {mlr.predict([3, 3])}
                           <br></br>
-                          mlr.weights {mlr.weights[0]}
+                          mlr.weights {mlr.weights}
                           <br></br>
-                          mlr.weights {mlr.weights[1]}
+                          mlr.weights[1] {mlr.weights[1]}
                           <br></br>
-                          mlr.weights {mlr.weights[2]}
+                          mlr.weights[2] {mlr.weights[2]}
                           <br></br>
-                          test =<br></br>
+                          stderrors = {stderrors} <br></br>
+                          <br></br>
                           colarray {colarray}
                           <br></br>
                           Antal observationer length {colarray.length}
@@ -188,35 +235,6 @@ export default function Meanraw() {
                                       Vores bedste gæt på, også kaldet estimat for, den sande middelværdi i populationen
                                       er stikprøvegennemsnittet <span>{`$\\bar{x}=${numberFormat4(a)}$`}</span>. Dette
                                       estimat skrives <span>{`$\\hat{\\mu}$`}</span> og udtales <i>my hat</i>.<br></br>
-                                      Den sande ukendte middelværdi i populationen betegnes <span>{`$\\mu$`}</span>, da
-                                      vi estimerer, angiver vi dette med hat-symbolet over{' '}
-                                      <span>{`$\\hat{\\mu}$`}</span>. Vi kalder også <span>{`$\\hat{\\mu}$`}</span> for
-                                      punktestimatet.<br></br>
-                                      Her har vi ikke de enkelte observationer, men kun de beregnede deskriptorer
-                                      stikprøve -gennemsnit og -standardafvigelse. Havde vi rådata (hver af de {b}{' '}
-                                      observationer), kunne vi bestemme punktestimatet som stikprøvegennemsnittet{' '}
-                                      <span>{`$\\bar{x}$`}</span> med formlen herunder:
-                                      <span>{`$$\\frac{\\sum_{i=1}^{n}{x_{i}}}{n} = \\frac{\\sum_{i=1}^{${b}}{x_{i}}}{${b}}=\\frac{x_{1}+...+x_{${b}}}{${b}}=${a}
-                                          
-                                        $$`}</span>
-                                      <hr></hr>
-                                      Vores bedste gæt på, også kaldet estimat for, den sande standardafvigelse i
-                                      populationen er . Dette estimat skrives <span>{`$\\hat{\\sigma}$`}</span> og
-                                      udtales <i>sigma hat</i>.<br></br>
-                                      Den sande ukendte standardafvigelse i populationen betegnes{' '}
-                                      <span>{`$\\sigma$`}</span>, da vi estimerer, angiver vi dette med hat-symbolet
-                                      over <span>{`$\\hat{\\sigma}$`}</span>. Vi kalder også{' '}
-                                      <span>{`$\\hat{\\sigma}$`}</span> for punktestimatet.<br></br>
-                                      Her har vi ikke de enkelte observationer, men kun de beregnede deskriptorer
-                                      stikprøve -gennemsnit og -standardafvigelse. Havde vi rådata (hver af de {b}{' '}
-                                      observationer), kunne vi bestemme estimatet ud fra stikprøve-standardafvigelsen{' '}
-                                      <span>{`$\\hat{\\sigma}$`}</span> med formlen herunder:
-                                      <span>{`$$\\sqrt{\\frac{\\sum_{i=1}^{n}{(x_{i}-\\bar{x})^2}}{n-1}} = \\sqrt{\\frac{\\sum_{i=1}^{${b}}{(x_{i}-\\bar{x})^2}}{${
-                                        b - 1
-                                      }}}=$$`}</span>
-                                      <span>{`$$\\sqrt{ \\frac{(x_{1}-\\bar{x})^2+...+(x_{${b}}-\\bar{x})^2}{${b - 1}}}=
-                                          
-                                        $$`}</span>
                                     </MathJax>
                                   </p>
                                 </div>

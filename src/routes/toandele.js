@@ -10,8 +10,7 @@ import { HotTable } from '@handsontable/react';
 import 'handsontable/dist/handsontable.full.css';
 import 'handsontable/dist/handsontable.min.css';
 import { std, min, max, median, quantileSeq, sum } from 'mathjs';
-var a = 23;
-var b = 23;
+import 'handsontable/languages/de-DE';
 
 const config = {
   loader: { load: ['[tex]/html'] },
@@ -49,20 +48,38 @@ const data2 = [
 
 const hotSettings = {
   data: data2,
-  colHeaders: ['var1', 'var2', 'var3'],
+  colHeaders: true,
 
   height: 'auto',
   licenseKey: 'non-commercial-and-evaluation',
-  numericFormat: {
-    pattern: '0.0,00',
-    culture: 'it-IT', // use this for EUR (German),
-    // more cultures available on http://numbrojs.com/languages.html
-  },
+  copyPaste: true,
+  // contextMenu: {
+  //   items: {
+  //     copy: {
+  //       name: 'Copy',
+  //     },
+  //     paste: {},
+  //     row_below: {},
+  //     // separator: ContextMenu.SEPARATOR,
+  //     clear_custom: {
+  //       name: 'Delete all cells',
+  //       callback: function () {
+  //         this.clear();
+  //       },
+  //     },
+  //   },
+  // },
+  contextMenu: true,
+  //colHeaders: ['ID', 'Full name', 'Position','Country', 'City'], => For columns custom labels
+  //contextMenu: ["copy", "cut", "paste"], => For copy/paste
+  //maxCols: 2, => For max limit of columns
+  //minCols: 1 => For min limit of columns
+  hiddenColumns: true,
 };
 
 export default function Toandele() {
   const hotTableComponent = useRef(null);
-  // const [sum, setSum] = useState(0);
+  const [total, setTotal] = useState(0);
   // const [avg, setAvg] = useState("");
   // const [std23, setstd23] = useState("33");
   const [colarray, setcolarray] = useState([1.4, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
@@ -75,24 +92,30 @@ export default function Toandele() {
 
   const afterUpdateCell = (changes, source) => {
     if (changes) {
-      console.log('changes', changes);
+      // console.log('changes', changes);
       changes.forEach(([row, col, oldValue, newValue]) => {
         const allValuesOfCol = hotTableComponent.current.hotInstance.getDataAtCol(col);
-        // let totalSum = 0;
-        //  let average = 0;
-        // let standarddeviation = 0;
+        let totalSum = 0;
+        for (const cell of allValuesOfCol) {
+          const convertedCell = cell.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+          });
+          //   // console.log("convertedCell", convertedCell);
+          //   // const testCellParse = parseFloat(testCell);
+          //   // console.log("testCellParse", testCellParse);
+          //   // if (isNumber(cell)) {
+          //   //   totalSum += parseFloat(cell);
+          //   // }
+          totalSum += parseFloat(convertedCell.replace(',', '.').replace(' ', ''));
+        }
+        // setTotal(totalSum);
 
-        // for (const cell of allValuesOfCol) {
-        //   if (isNumber(cell)) {
-        //     // totalSum += parseFloat(cell);
-        //     // average = totalSum/3;
-        //     // standarddeviation += pow(parseFloat(cell)-average,2)/3;
-        //   }
-        // }
-        // setSum(totalSum);
-        // setAvg(average);
-        // setstd23(standarddeviation);
-        setcolarray(allValuesOfCol);
+        if (isNaN(totalSum)) {
+          alert('Non numeric values are pasted in column');
+        } else {
+          setTotal(totalSum);
+          setcolarray(allValuesOfCol);
+        }
       });
     }
   };
@@ -115,6 +138,7 @@ export default function Toandele() {
                         rowHeaders={true}
                       />
                       <hr></hr>
+                      {total}
                       <br></br>
                       {colarray}
                       <br></br>
@@ -148,37 +172,7 @@ export default function Toandele() {
                                     <MathJax dynamic>
                                       <hr></hr>
                                       Vores bedste gæt på, også kaldet estimat for, den sande middelværdi i populationen
-                                      er stikprøvegennemsnittet <span>{`$\\bar{x}=${numberFormat4(a)}$`}</span>. Dette
-                                      estimat skrives <span>{`$\\hat{\\mu}$`}</span> og udtales <i>my hat</i>.<br></br>
-                                      Den sande ukendte middelværdi i populationen betegnes <span>{`$\\mu$`}</span>, da
-                                      vi estimerer, angiver vi dette med hat-symbolet over{' '}
-                                      <span>{`$\\hat{\\mu}$`}</span>. Vi kalder også <span>{`$\\hat{\\mu}$`}</span> for
-                                      punktestimatet.<br></br>
-                                      Her har vi ikke de enkelte observationer, men kun de beregnede deskriptorer
-                                      stikprøve -gennemsnit og -standardafvigelse. Havde vi rådata (hver af de {b}{' '}
-                                      observationer), kunne vi bestemme punktestimatet som stikprøvegennemsnittet{' '}
-                                      <span>{`$\\bar{x}$`}</span> med formlen herunder:
-                                      <span>{`$$\\frac{\\sum_{i=1}^{n}{x_{i}}}{n} = \\frac{\\sum_{i=1}^{${b}}{x_{i}}}{${b}}=\\frac{x_{1}+...+x_{${b}}}{${b}}=${a}
-                                          
-                                        $$`}</span>
-                                      <hr></hr>
-                                      Vores bedste gæt på, også kaldet estimat for, den sande standardafvigelse i
-                                      populationen er . Dette estimat skrives <span>{`$\\hat{\\sigma}$`}</span> og
-                                      udtales <i>sigma hat</i>.<br></br>
-                                      Den sande ukendte standardafvigelse i populationen betegnes{' '}
-                                      <span>{`$\\sigma$`}</span>, da vi estimerer, angiver vi dette med hat-symbolet
-                                      over <span>{`$\\hat{\\sigma}$`}</span>. Vi kalder også{' '}
-                                      <span>{`$\\hat{\\sigma}$`}</span> for punktestimatet.<br></br>
-                                      Her har vi ikke de enkelte observationer, men kun de beregnede deskriptorer
-                                      stikprøve -gennemsnit og -standardafvigelse. Havde vi rådata (hver af de {b}{' '}
-                                      observationer), kunne vi bestemme estimatet ud fra stikprøve-standardafvigelsen{' '}
-                                      <span>{`$\\hat{\\sigma}$`}</span> med formlen herunder:
-                                      <span>{`$$\\sqrt{\\frac{\\sum_{i=1}^{n}{(x_{i}-\\bar{x})^2}}{n-1}} = \\sqrt{\\frac{\\sum_{i=1}^{${b}}{(x_{i}-\\bar{x})^2}}{${
-                                        b - 1
-                                      }}}=$$`}</span>
-                                      <span>{`$$\\sqrt{ \\frac{(x_{1}-\\bar{x})^2+...+(x_{${b}}-\\bar{x})^2}{${b - 1}}}=
-                                          
-                                        $$`}</span>
+                                      er stikprøvegennemsnittet <span>{`$\\bar{x}=${numberFormat4(total)}$`}</span>.
                                     </MathJax>
                                   </p>
                                 </div>

@@ -88,7 +88,8 @@ export default function Meanraw() {
   function transpose(matrix) {
     return matrix[0].map((col, i) => matrix.map((row) => row[i]));
   }
-  var residuals = [].concat
+
+  var predicted = [].concat
     .apply([], MatrixProd(x, mlr.weights))
     .map((n) => n + mlr.weights[mlr.weights.length - 1][0]);
 
@@ -143,10 +144,18 @@ export default function Meanraw() {
                             rowHeaders={true}
                           />
                           <hr></hr>
-                          dimension(residuals)=
-                          {dimension(residuals)}
+                          y.flat = {y.flat()}
                           <br></br>
-                          residuals {residuals}
+                          resid = {y.flat - predicted}
+                          <br></br>
+                          dimension(predicted)=
+                          {dimension([
+                            [1, 2],
+                            [2, 2],
+                            [3, 2],
+                          ])}
+                          <br></br>
+                          predicted {predicted}
                           <br></br>
                           flatten-intercept ={' '}
                           {[].concat

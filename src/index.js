@@ -7,6 +7,7 @@ import Toandele from './routes/toandele';
 import ToandeleTest from './routes/toandele_1';
 import Meanraw from './routes/meanraw';
 import Mean from './routes/mean';
+
 import './styles.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

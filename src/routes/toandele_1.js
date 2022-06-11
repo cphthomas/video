@@ -53,19 +53,19 @@ const hotSettings = {
   licenseKey: 'non-commercial-and-evaluation',
   copyPaste: true,
   contextMenu: true,
-  //colHeaders: ['ID', 'Full name', 'Position','Country', 'City'], => For columns custom labels
+  // colHeaders: ['ID1', 'Full name', 'Position'],
   //contextMenu: ["copy", "cut", "paste"], => For copy/paste
   //maxCols: 2, => For max limit of columns
   //minCols: 1 => For min limit of columns
   hiddenColumns: true,
-  language: 'de-DE',
+  language: 'en-US',
   type: 'numeric',
   numericFormat: { culture: 'de-DE', pattern: '0,0' },
 };
 
 export default function ToandeleTest() {
   const hotTableComponent = useRef(null);
-  const [colarray, setcolarray] = useState([1.4, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  const [colarray, setcolarray] = useState([1.23, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
   const [isContainText, setIsContainText] = useState(false);
 
   useEffect(() => {}, [hotTableComponent]);
@@ -116,17 +116,19 @@ export default function ToandeleTest() {
                       <br></br>
                       Antal observationer length {colarray.length}
                       <br></br>
-                      Mindste obs min {!isContainText && min(...colarray)}
+                      Mindste obs min {!isContainText && numberFormat4(min(...colarray))}
                       <br></br>
-                      Største obs max {!isContainText && max(...colarray)}
+                      Største obs max {!isContainText && numberFormat4(max(...colarray))}
                       <br></br>
-                      std from mathjs {!isContainText && std(...colarray)}
+                      std from mathjs {!isContainText && numberFormat4(std(...colarray))}
                       <br></br>
-                      median from mathjs {!isContainText && median(...colarray)}
+                      median from mathjs {!isContainText && numberFormat4(median(...colarray))}
                       <br></br>
-                      Quantile from mathjs {!isContainText && quantileSeq(colarray, 0.9)}
+                      90% Quantile from mathjs {!isContainText && numberFormat4(quantileSeq(colarray, 0.9))}
                       <br></br>
-                      Sum from mathjs {!isContainText && sum(...colarray)}
+                      Sum from mathjs {!isContainText && numberFormat4(sum(...colarray))}
+                      <br></br>
+                      Sum from mathjs {numberFormat4(sum(...colarray))}
                       <br></br>
                     </div>
                     <span class="lead text-muted"></span>

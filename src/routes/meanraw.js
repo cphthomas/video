@@ -9,8 +9,10 @@ import { MathJax, MathJaxContext } from 'better-react-mathjax';
 import { HotTable } from '@handsontable/react';
 import 'handsontable/dist/handsontable.full.css';
 import 'handsontable/dist/handsontable.min.css';
-import { std, min, max, median, quantileSeq, sum } from 'mathjs';
+import { std, min, mean, max, median, quantileSeq, sum } from 'mathjs';
 import MLR from 'ml-regression-multivariate-linear';
+
+var fcdf = require('@stdlib/stats/base/dists/f/cdf');
 
 var a = 23;
 
@@ -61,20 +63,22 @@ const hotSettings = {
 
 export default function Meanraw() {
   const hotTableComponent = useRef(null);
-  // const [sum, setSum] = useState(0);
+  const [total, setTotal] = useState(0);
+
   // const [avg, setAvg] = useState("");
   // const [std23, setstd23] = useState("33");
   const [colarray, setcolarray] = useState([1.4, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
   const x = [
-    [1, 2],
-    [1, 2],
-    [2, 3],
-    [3, 4],
-    [7, 4],
+    [1, 2, 5],
+    [1, 2, 7],
+    [2, 3, 3],
+    [3, 4, 3],
+    [7, 4, 1],
+    [3, 1, 2],
   ];
   // Y0 = X0 * 2, Y1 = X1 * 2, Y2 = X0 + X1
-  const y = [[1], [2], [4], [6], [8]];
+  const y = [[1], [2], [4], [6], [8], [7]];
   const mlr = new MLR(x, y);
   var tstats = mlr.tStats;
   var stderrors = mlr.stdErrors;
@@ -93,32 +97,51 @@ export default function Meanraw() {
     .apply([], MatrixProd(x, mlr.weights))
     .map((n) => n + mlr.weights[mlr.weights.length - 1][0]);
 
+  var residuals = y.map((n, i) => n - predicted[i]);
+  var ST = predicted.map((n) => mean(y) - n);
+
+  function squareSum(numbers) {
+    return numbers
+      .map(function (n) {
+        return n * n;
+      })
+      .reduce(function (sum, n) {
+        return sum + n;
+      });
+  }
+
+  var SSR = squareSum(residuals);
+  var SST = squareSum(ST) + SSR;
+  var R2 = 1 - SSR / SST;
+  // var Ncoef = 2;
+  var R2adj = 1 - ((1 - R2) * (y.length - 1)) / (y.length - x[0].length - 1);
+  var Fstat = (SST - SSR) / x[0].length / (SSR / (y.length - x[0].length - 1));
+  var Fpval = 1 - fcdf(Fstat, x[0].length, y.length - x[0].length - 1);
+
   useEffect(() => {}, [hotTableComponent]);
 
-  const isNumber = (n) => {
-    return /^-?[\d.]+(?:e-?\d+)?$/.test(n);
-  };
+  // const isNumber = (n) => {
+  //   return /^-?[\d.]+(?:e-?\d+)?$/.test(n);
+  // };
 
   const afterUpdateCell = (changes, source) => {
     if (changes) {
-      console.log('changes', changes);
       changes.forEach(([row, col, oldValue, newValue]) => {
         const allValuesOfCol = hotTableComponent.current.hotInstance.getDataAtCol(col);
-        // let totalSum = 0;
-        //  let average = 0;
-        // let standarddeviation = 0;
-
+        let totalSum = 0;
         for (const cell of allValuesOfCol) {
-          if (isNumber(cell)) {
-            // totalSum += parseFloat(cell);
-            // average = totalSum/3;
-            // standarddeviation += pow(parseFloat(cell)-average,2)/3;
-          }
+          const convertedCell = cell.toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+          });
+
+          totalSum += parseFloat(convertedCell.replace(',', '.').replace(' ', ''));
         }
-        // setSum(totalSum);
-        // setAvg(average);
-        // setstd23(standarddeviation);
-        setcolarray(allValuesOfCol);
+        if (isNaN(total)) {
+          alert('Non numeric values are pasted in column');
+        } else {
+          setTotal(totalSum);
+          setcolarray(allValuesOfCol);
+        }
       });
     }
   };
@@ -146,7 +169,7 @@ export default function Meanraw() {
                           <hr></hr>
                           y.flat = {y.flat()}
                           <br></br>
-                          resid = {y.flat - predicted}
+                          resid = {y - predicted}
                           <br></br>
                           dimension(predicted)=
                           {dimension([
@@ -156,6 +179,26 @@ export default function Meanraw() {
                           ])}
                           <br></br>
                           predicted {predicted}
+                          <br></br>
+                          residuals = {residuals}
+                          <br></br>
+                          squareSum(residuals) = {squareSum(residuals)}
+                          <br></br>y = {mean(y)}
+                          <br></br>ST = {ST}
+                          <br></br>SSR = {SSR}
+                          <br></br>SST = {SST}
+                          <br></br>R2 = {R2}
+                          <br></br>R2adj = {R2adj}
+                          <br></br>Fstat = {Fstat}
+                          <br></br>Fpval = {Fpval}
+                          <br></br>x[0].length = {x[0].length}
+                          <br></br>x[0] = {x}
+                          <br></br>squareSum = {squareSum(residuals)}
+                          <br></br>
+                          R2 = {1 - squareSum(residuals) / SST}
+                          <br></br>
+                          <br></br>
+                          <br></br>
                           <br></br>
                           flatten-intercept ={' '}
                           {[].concat
@@ -182,6 +225,7 @@ export default function Meanraw() {
                           <br></br>
                           x[0][0] = {x[0][0]}
                           <hr></hr>
+                          total = {total}
                           <br></br>
                           mlr.predict([3, 3]) {mlr.predict([3, 3])}
                           <br></br>

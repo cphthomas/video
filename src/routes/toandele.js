@@ -92,7 +92,6 @@ export default function Toandele() {
 
   const afterUpdateCell = (changes, source) => {
     if (changes) {
-      // console.log('changes', changes);
       changes.forEach(([row, col, oldValue, newValue]) => {
         const allValuesOfCol = hotTableComponent.current.hotInstance.getDataAtCol(col);
         let totalSum = 0;
@@ -100,15 +99,9 @@ export default function Toandele() {
           const convertedCell = cell.toLocaleString('en-US', {
             minimumFractionDigits: 2,
           });
-          //   // console.log("convertedCell", convertedCell);
-          //   // const testCellParse = parseFloat(testCell);
-          //   // console.log("testCellParse", testCellParse);
-          //   // if (isNumber(cell)) {
-          //   //   totalSum += parseFloat(cell);
-          //   // }
+
           totalSum += parseFloat(convertedCell.replace(',', '.').replace(' ', ''));
         }
-        // setTotal(totalSum);
 
         if (isNaN(totalSum)) {
           alert('Non numeric values are pasted in column');

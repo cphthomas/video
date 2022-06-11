@@ -157,8 +157,8 @@ export default function Meanraw() {
                   <Form>
                     <div class="card">
                       <div class="card-body">
-                        <p class="card-text"></p>
-                        <div className="controls">
+                        <p class="card-text">
+                          <h2>Lineær regressionsanalyse</h2>
                           <HotTable
                             ref={hotTableComponent}
                             settings={hotSettings}
@@ -171,12 +171,8 @@ export default function Meanraw() {
                           <br></br>
                           resid = {y - predicted}
                           <br></br>
-                          dimension(predicted)=
-                          {dimension([
-                            [1, 2],
-                            [2, 2],
-                            [3, 2],
-                          ])}
+                          dimension([[1], [2], [3], [4]])=
+                          {dimension([[1], [2], [3], [4]])}
                           <br></br>
                           predicted {predicted}
                           <br></br>
@@ -266,7 +262,7 @@ export default function Meanraw() {
                           <br></br>
                           Sum from mathjs {sum(...colarray)}
                           <br></br>
-                        </div>
+                        </p>
                       </div>
                     </div>
 

@@ -43,22 +43,28 @@ export const NavigationBar = () => (
           <Nav.Item>
             <Dropdown size="sm">
               <Dropdown.Toggle size="sm" variant="primary" id="dropdown-basic">
-                Beregnede data
+                1 Variabel
               </Dropdown.Toggle>
               <Dropdown.Menu>
                 <Dropdown.Item size="sm" href="/mean" target="_blank">
-                  Middelværdi
+                  1 Kvantitativ variabel
                 </Dropdown.Item>
                 <Dropdown.Item size="sm" href="/andel" target="_blank">
-                  Andel
-                </Dropdown.Item>
-                <Dropdown.Item size="sm" href="/toandele" target="_blank">
-                  2 Andele
+                  1 Kvalitativ variabel
                 </Dropdown.Item>
 
                 <Dropdown.Divider />
-                <Dropdown.Item size="sm" href="/linjer" target="_blank">
-                  Front
+                <Dropdown.Item size="sm" href="/normal" target="_blank">
+                  Normalfordeling
+                </Dropdown.Item>
+                <Dropdown.Item size="sm" href="/binomial" target="_blank">
+                  Binomialfordeling
+                </Dropdown.Item>
+                <Dropdown.Item size="sm" href="/hypergeo" target="_blank">
+                  Hypergeometrisk fordeling
+                </Dropdown.Item>
+                <Dropdown.Item size="sm" href="/poisson" target="_blank">
+                  Poissonfordeling
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
@@ -66,19 +72,27 @@ export const NavigationBar = () => (
           <Nav.Item>
             <Dropdown size="sm">
               <Dropdown.Toggle size="sm" variant="primary" id="dropdown-basic">
-                Rå data
+                Flere variable
               </Dropdown.Toggle>
               <Dropdown.Menu>
                 <Dropdown.Item size="sm" href="/mean" target="_blank">
-                  Middelværdi
+                  2 Kvantitative
                 </Dropdown.Item>
-                <Dropdown.Item size="sm" href="/andel" target="_blank">
-                  Andel
+                <Dropdown.Item size="sm" href="/toandele" target="_blank">
+                  2 Kvalitative
                 </Dropdown.Item>
 
                 <Dropdown.Divider />
                 <Dropdown.Item size="sm" href="/meanraw" target="_blank">
-                  Middelværdi rådata
+                  Lineær Regression
+                </Dropdown.Item>
+                <Dropdown.Divider />
+                <Dropdown.Item size="sm" href="/chi2" target="_blank">
+                  Chi i anden test
+                </Dropdown.Item>
+                <Dropdown.Divider />
+                <Dropdown.Item size="sm" href="/anova" target="_blank">
+                  ANOVA analyse
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>

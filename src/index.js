@@ -8,6 +8,12 @@ import ToandeleTest from './routes/toandele_1';
 import Meanraw from './routes/meanraw';
 import Mean from './routes/mean';
 
+import Normal from './routes/normal';
+import Binomial from './routes/binomial';
+import Hypergeo from './routes/hypergeo';
+import Poisson from './routes/poisson';
+import Chi2 from './routes/chi2';
+import Anova from './routes/anova';
 import './styles.css';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -21,6 +27,12 @@ root.render(
         <Route path="toandele_1" element={<ToandeleTest />}></Route>
         <Route path="meanraw" element={<Meanraw />}></Route>
         <Route path="mean" element={<Mean />}></Route>
+        <Route path="normal" element={<Normal />}></Route>
+        <Route path="binomial" element={<Binomial />}></Route>
+        <Route path="hypergeo" element={<Hypergeo />}></Route>
+        <Route path="poisson" element={<Poisson />}></Route>
+        <Route path="chi2" element={<Chi2 />}></Route>
+        <Route path="anova" element={<Anova />}></Route>
         <Route
           path="*"
           element={

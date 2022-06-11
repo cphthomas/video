@@ -661,9 +661,7 @@ export default function Mean() {
                       </OverlayTrigger>
                     </span>
                     <p class="lead text-muted">
-                      lowersigma = {numberFormat4(lowersigma)} og uppersigma = {uppersigma} og quantilechi(0.05, 49) ={' '}
-                      {quantilechi(0.05, 49)}
-                      <br></br>Analyse af en kvantitativ variabel, tests af middel og standardafvigelse
+                      Analyse af en kvantitativ variabel, tests af middel og standardafvigelse
                     </p>
 
                     {/* Signifikansniveau########################################################################################################################################################################################## */}

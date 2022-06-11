@@ -4,6 +4,7 @@ import App from './App';
 import Front from './routes/front';
 import Andel from './routes/andel';
 import Toandele from './routes/toandele';
+import ToandeleTest from './routes/toandele_1';
 import Meanraw from './routes/meanraw';
 import Mean from './routes/mean';
 import './styles.css';
@@ -16,6 +17,7 @@ root.render(
         <Route path="front" element={<Front />} />
         <Route path="andel" element={<Andel />} />
         <Route path="toandele" element={<Toandele />}></Route>
+        <Route path="toandele_1" element={<ToandeleTest />}></Route>
         <Route path="meanraw" element={<Meanraw />}></Route>
         <Route path="mean" element={<Mean />}></Route>
         <Route

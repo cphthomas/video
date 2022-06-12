@@ -39,16 +39,12 @@ const numberFormat4 = (value) =>
 
 const hotSettings = {
   data: [
-    [1, 2, 2],
-    [2, 10, 11],
-    [3, 20, 11],
-    [4, 30, 15],
-    [5, 33, 15],
-    [6, 30, 15],
-    [7, 30, 15],
-    [8, 30, 15],
-    [9, 30, 15],
-    [10, 30, 15],
+    [1, 1, 2, 5],
+    [2, 1, 2, 7],
+    [4, 2, 3, 3],
+    [6, 3, 4, 3],
+    [8, 7, 4, 1],
+    [7, 3, 1, 2],
   ],
   colHeaders: ['var1', 'var2', 'var3'],
 
@@ -67,7 +63,7 @@ export default function Meanraw() {
 
   // const [avg, setAvg] = useState("");
   // const [std23, setstd23] = useState("33");
-  const [colarray, setcolarray] = useState([1.4, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  const [colarray, setcolarray] = useState([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
   const x = [
     [1, 2, 5],
@@ -163,7 +159,7 @@ export default function Meanraw() {
                             ref={hotTableComponent}
                             settings={hotSettings}
                             afterChange={afterUpdateCell}
-                            colHeaders={true}
+                            colHeaders={['var1', 'var2', 'var3']}
                             rowHeaders={true}
                           />
                           <hr></hr>

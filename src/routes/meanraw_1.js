@@ -3,13 +3,13 @@ import React, { useState, useRef, useEffect } from 'react';
 // import { Tooltip, OverlayTrigger, FormControl, Button } from 'react-bootstrap';
 // import Dropdown from 'react-bootstrap/Dropdown';
 import Container from 'react-bootstrap/Container';
-import { Form, Row, Col } from 'react-bootstrap';
+// import { Form, Row, Col } from 'react-bootstrap';
 // import InputGroup from 'react-bootstrap/InputGroup';
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
 import { HotTable } from '@handsontable/react';
 import 'handsontable/dist/handsontable.full.css';
 import 'handsontable/dist/handsontable.min.css';
-import { std, min, mean, max, median, quantileSeq, sum } from 'mathjs';
+// import { std, min, mean, max, median, quantileSeq, sum } from 'mathjs';
 import MLR from 'ml-regression-multivariate-linear';
 
 const config = {
@@ -29,10 +29,12 @@ const config = {
 
 const hotSettings = {
   data: [
-    [1, 2],
-    [4, 5],
-    [6, 7],
-    [8, 9],
+    [1, 1, 2, 5],
+    [2, 1, 2, 7],
+    [4, 2, 3, 3],
+    [6, 3, 4, 3],
+    [8, 7, 4, 1],
+    [7, 3, 1, 2],
   ],
   // colHeaders: true,
   height: 'auto',
@@ -88,6 +90,7 @@ export default function MeanrawTest() {
                   <HotTable ref={hotTableComponent} settings={hotSettings} afterChange={afterUpdateCell} />
                 </div>
                 <br />
+                <MathJax>$$\\Math$$</MathJax>
                 <br />
                 Linear Regression = {JSON.stringify(linearRegression, null, 2)}
               </Container>

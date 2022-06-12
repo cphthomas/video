@@ -54,13 +54,15 @@ const hotSettings = {
   copyPaste: true,
   contextMenu: true,
   // colHeaders: ['ID1', 'Full name', 'Position'],
-  //contextMenu: ["copy", "cut", "paste"], => For copy/paste
-  //maxCols: 2, => For max limit of columns
-  //minCols: 1 => For min limit of columns
+  // contextMenu: ["copy", "cut", "paste"], => For copy/paste
+  // maxCols: 2, => For max limit of columns
+  // minCols: 1 => For min limit of columns
   hiddenColumns: true,
   language: 'en-US',
   type: 'numeric',
   numericFormat: { culture: 'de-DE', pattern: '0,0' },
+  allowInvalid: false,
+  allowEmpty: false,
 };
 
 export default function ToandeleTest() {
@@ -76,21 +78,9 @@ export default function ToandeleTest() {
       let allValuesOfCol = [];
       changes.forEach(([row, col, oldValue, newValue]) => {
         allValuesOfCol = hotTableComponent.current.hotInstance.getDataAtCol(col);
-
-        for (const cell of allValuesOfCol) {
-          const convertedCell = cell.toLocaleString('en-US', {
-            minimumFractionDigits: 2,
-          });
-
-          totalSum += parseFloat(convertedCell.replace(',', '.').replace(' ', ''));
-        }
       });
-      if (isNaN(totalSum)) {
-        setIsContainText(true);
-        alert('Non numeric values are pasted in column');
-      } else {
-        setcolarray(allValuesOfCol);
-      }
+
+      setcolarray(allValuesOfCol);
     }
   };
 

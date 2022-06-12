@@ -6,6 +6,7 @@ import Andel from './routes/andel';
 import Toandele from './routes/toandele';
 import ToandeleTest from './routes/toandele_1';
 import Meanraw from './routes/meanraw';
+import MeanrawTest from './routes/meanraw_1';
 import Mean from './routes/mean';
 
 import Normal from './routes/normal';
@@ -26,6 +27,7 @@ root.render(
         <Route path="toandele" element={<Toandele />}></Route>
         <Route path="toandele_1" element={<ToandeleTest />}></Route>
         <Route path="meanraw" element={<Meanraw />}></Route>
+        <Route path="meanraw_1" element={<MeanrawTest />}></Route>
         <Route path="mean" element={<Mean />}></Route>
         <Route path="normal" element={<Normal />}></Route>
         <Route path="binomial" element={<Binomial />}></Route>

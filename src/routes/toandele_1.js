@@ -68,13 +68,13 @@ const hotSettings = {
 export default function ToandeleTest() {
   const hotTableComponent = useRef(null);
   const [colarray, setcolarray] = useState([1.23, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-  const [isContainText, setIsContainText] = useState(false);
-
+  // const [isContainText, setIsContainText] = useState(false);
+  const isContainText = false;
   useEffect(() => {}, [hotTableComponent]);
 
   const afterUpdateCell = (changes, source) => {
     if (changes) {
-      let totalSum = 0;
+      // let totalSum = 0;
       let allValuesOfCol = [];
       changes.forEach(([row, col, oldValue, newValue]) => {
         allValuesOfCol = hotTableComponent.current.hotInstance.getDataAtCol(col);

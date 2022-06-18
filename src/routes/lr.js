@@ -5,28 +5,13 @@ import React, { useState, useRef, useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 // import { Form, Row, Col } from 'react-bootstrap';
 // import InputGroup from 'react-bootstrap/InputGroup';
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
+// import { MathJax, MathJaxContext } from 'better-react-mathjax';
 import { HotTable } from '@handsontable/react';
 import 'handsontable/dist/handsontable.full.css';
 import 'handsontable/dist/handsontable.min.css';
 // import { std, min, mean, max, median, quantileSeq, sum } from 'mathjs';
-import { inv, transpose } from 'mathjs';
+import { inv, transpose, multiply } from 'mathjs';
 // import MLR from 'ml-regression-multivariate-linear';
-
-const config = {
-  loader: { load: ['[tex]/html'] },
-  tex: {
-    packages: { '[+]': ['html'] },
-    inlineMath: [
-      ['$', '$'],
-      ['\\(', '\\)'],
-    ],
-    displayMath: [
-      ['$$', '$$'],
-      ['\\[', '\\]'],
-    ],
-  },
-};
 
 const hotSettings = {
   data: [
@@ -69,9 +54,9 @@ export default function Lr() {
   // function t(matrix) {
   //   return matrix[0].map((col, i) => matrix.map((row) => row[i]));
   // }
-  let MatrixProd = (A, B) =>
-    A.map((row, i) => B[0].map((_, j) => row.reduce((acc, _, n) => acc + A[i][n] * B[n][j], 0)));
-  useEffect(() => {}, [hotTableComponent]);
+  // let MatrixProd = (A, B) =>
+  //   A.map((row, i) => B[0].map((_, j) => row.reduce((acc, _, n) => acc + A[i][n] * B[n][j], 0)));
+  // useEffect(() => {}, [hotTableComponent]);
 
   const afterUpdateCell = (changes, source) => {
     if (changes) {
@@ -84,50 +69,46 @@ export default function Lr() {
       let x = [];
       for (let index = 1; index < allData[0].length; index++) {
         const arr = hotTableComponent.current.hotInstance.getDataAtCol(index);
+
         x.push(arr);
+        x.push(Array(x[0].length).fill(1));
         setX(transpose(x));
       }
     }
   };
 
   return (
-    <MathJaxContext hideUntilTypeset={'first'} config={config} version={3}>
-      <main style={{ padding: '1rem 0' }}>
-        <Container className="p-0">
-          <div class="p-3 mb-2 bg-white text-black">
-            <div class="card">
-              <Container>
-                <div class="p-3 mb-2 bg-white">
-                  <HotTable ref={hotTableComponent} settings={hotSettings} afterChange={afterUpdateCell} />
-                </div>
-                <br />
-                <MathJax>$\\Math$</MathJax>
-                <br />X = {X}
-                <br />Y = {Y}
-                <br />
-                dimension(X) = {dimension(X)}
-                <br />
-                dimension(Y) = {dimension(Y)}
-                <br />
-                transpose(X)= {transpose(X)}
-                <br />
-                MatrixProd(transpose(X),X)= {MatrixProd(X, transpose(X))}
-                <br />
-                inv(MatrixProd(transpose(X),X))= {inv(MatrixProd(transpose(X), X))}
-                <br />
-                MatrixProd(transpose(X),Y)= {MatrixProd(transpose(X), Y)}
-                <br />
-                MatrixProd(inv(MatrixProd(transpose(X),X)),MatrixProd(transpose(X),Y))=
-                {MatrixProd(inv(MatrixProd(transpose(X), X)), MatrixProd(transpose(X), Y))}
-                {/* {/* dimension(X) = {dimension(X)} */}
-                <br />
-                transpose(X) = {transpose(X)}
-                <br />Y = {Y}
-              </Container>
-            </div>
+    <main style={{ padding: '1rem 0' }}>
+      <Container className="p-0">
+        <div class="p-3 mb-2 bg-white text-black">
+          <div class="card">
+            <Container>
+              <div class="p-3 mb-2 bg-white">
+                <HotTable ref={hotTableComponent} settings={hotSettings} afterChange={afterUpdateCell} />
+              </div>
+              <br />
+              <br />X = {X}
+              <br />Y = {Y}
+              <br />
+              dimension(X) = {dimension(X)}
+              <br />
+              dimension(Y) = {dimension(Y)}
+              <br />
+              transpose(X)= {transpose(X)}
+              <br />
+              multiply(transpose(X),X)= {multiply(X, transpose(X))}
+              <br />
+              inv(multiply(transpose(X),X))= {inv(multiply(transpose(X), X))}
+              <br />
+              multiply(transpose(X),Y)= {multiply(transpose(X), Y)}
+              <br />
+              multiply(inv(multiply(transpose(X),X)),multiply(transpose(X),Y))=
+              {multiply(inv(multiply(transpose(X), X)), multiply(transpose(X), Y))}
+              <br />
+            </Container>
           </div>
-        </Container>
-      </main>
-    </MathJaxContext>
+        </div>
+      </Container>
+    </main>
   );
 }

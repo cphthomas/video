@@ -42,12 +42,13 @@ const hotSettings = {
   copyPaste: true,
   contextMenu: true,
   colHeaders: ['Hidden', 'Price(X)', 'Demand(Y)'],
-  hiddenColumns: true,
+  hiddenColumns: { columns: [0] },
   language: 'en-US',
   type: 'numeric',
   numericFormat: { culture: 'de-DE', pattern: '0,0' },
   allowInvalid: false,
   allowEmpty: false,
+  // columns: [{ hidden: true }, {}, {}],
 };
 
 export default function MeanrawTest() {
@@ -100,10 +101,15 @@ export default function MeanrawTest() {
           <div class="p-3 mb-2 bg-white text-black">
             <div class="card">
               <Container>
+                <ul>
+                  <li>Last column will be Y axis</li>
+                  <li>Other columns will be X axis</li>
+                </ul>
                 <div class="p-3 mb-2 bg-white">
                   <HotTable ref={hotTableComponent} settings={hotSettings} afterChange={afterUpdateCell} />
                 </div>
                 <br />
+
                 {JSON.stringify(linearRegression, null, 2)}
               </Container>
             </div>

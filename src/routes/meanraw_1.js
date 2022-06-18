@@ -5,28 +5,28 @@ import React, { useState, useRef, useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
 // import { Form, Row, Col } from 'react-bootstrap';
 // import InputGroup from 'react-bootstrap/InputGroup';
-import { MathJax, MathJaxContext } from 'better-react-mathjax';
+// import { MathJax, MathJaxContext } from 'better-react-mathjax';
 import { HotTable } from '@handsontable/react';
 import 'handsontable/dist/handsontable.full.css';
 import 'handsontable/dist/handsontable.min.css';
 // import { std, min, mean, max, median, quantileSeq, sum } from 'mathjs';
-import MLR from 'ml-regression-multivariate-linear';
+// import MLR from 'ml-regression-multivariate-linear';
 import { matrix, transpose, multiply, inv } from 'mathjs';
 
-const config = {
-  loader: { load: ['[tex]/html'] },
-  tex: {
-    packages: { '[+]': ['html'] },
-    inlineMath: [
-      ['$', '$'],
-      ['\\(', '\\)'],
-    ],
-    displayMath: [
-      ['$$', '$$'],
-      ['\\[', '\\]'],
-    ],
-  },
-};
+// const config = {
+//   loader: { load: ['[tex]/html'] },
+//   tex: {
+//     packages: { '[+]': ['html'] },
+//     inlineMath: [
+//       ['$', '$'],
+//       ['\\(', '\\)'],
+//     ],
+//     displayMath: [
+//       ['$$', '$$'],
+//       ['\\[', '\\]'],
+//     ],
+//   },
+// };
 
 const hotSettings = {
   data: [
@@ -95,27 +95,27 @@ export default function MeanrawTest() {
   };
 
   return (
-    <MathJaxContext hideUntilTypeset={'first'} config={config} version={3}>
-      <main style={{ padding: '1rem 0' }}>
-        <Container className="p-0">
-          <div class="p-3 mb-2 bg-white text-black">
-            <div class="card">
-              <Container>
-                <ul>
-                  <li>Last column will be Y axis</li>
-                  <li>Other columns will be X axis</li>
-                </ul>
-                <div class="p-3 mb-2 bg-white">
-                  <HotTable ref={hotTableComponent} settings={hotSettings} afterChange={afterUpdateCell} />
-                </div>
-                <br />
+    // <MathJaxContext hideUntilTypeset={'first'} config={config} version={3}>
+    <main style={{ padding: '1rem 0' }}>
+      <Container className="p-0">
+        <div class="p-3 mb-2 bg-white text-black">
+          <div class="card">
+            <Container>
+              <ul>
+                <li>Last column will be Y axis</li>
+                <li>Other columns will be X axis</li>
+              </ul>
+              <div class="p-3 mb-2 bg-white">
+                <HotTable ref={hotTableComponent} settings={hotSettings} afterChange={afterUpdateCell} />
+              </div>
+              <br />
 
-                {JSON.stringify(linearRegression, null, 2)}
-              </Container>
-            </div>
+              {JSON.stringify(linearRegression, null, 2)}
+            </Container>
           </div>
-        </Container>
-      </main>
-    </MathJaxContext>
+        </div>
+      </Container>
+    </main>
+    // </MathJaxContext>
   );
 }

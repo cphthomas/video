@@ -30,21 +30,21 @@ import { matrix, transpose, multiply, inv } from 'mathjs';
 
 const hotSettings = {
   data: [
-    [1, 49, 124],
-    [1, 69, 95],
-    [1, 89, 71],
-    [1, 99, 45],
-    [1, 109, 18],
-    [1, 16, 19],
-    [1, 77, 88],
+    [49, 124],
+    [69, 95],
+    [89, 71],
+    [99, 45],
+    [109, 18],
+    [16, 19],
+    [77, 88],
   ],
   // colHeaders: true,
   height: 'auto',
   licenseKey: 'non-commercial-and-evaluation',
   copyPaste: true,
   contextMenu: true,
-  colHeaders: ['Hidden', 'Price(X)', 'Demand(Y)'],
-  hiddenColumns: { columns: [0] },
+  colHeaders: ['Demand(Y)', 'Price(X)'],
+  // hiddenColumns: { columns: [1] },
   language: 'en-US',
   type: 'numeric',
   numericFormat: { culture: 'de-DE', pattern: '0,0' },
@@ -63,11 +63,12 @@ export default function MeanrawTest() {
     if (changes) {
       let allData = [[]];
       allData = hotTableComponent.current.hotInstance.getData();
-      const y = hotTableComponent.current.hotInstance.getDataAtCol(allData[0].length - 1);
+      const y = hotTableComponent.current.hotInstance.getDataAtCol(0);
       let x = [];
       for (let i = 0; i < allData.length; i++) {
         let innerArr = [];
-        for (let j = 0; j < allData[0].length - 1; j++) {
+        for (let j = 1; j < allData[0].length; j++) {
+          innerArr.push(1);
           innerArr.push(allData[i][j]);
         }
         x.push(innerArr);

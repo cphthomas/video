@@ -1,43 +1,22 @@
 import React, { useState, useRef, useEffect } from 'react';
-// import DropdownButton from 'react-bootstrap/DropdownButton';
-// import { Tooltip, OverlayTrigger, FormControl, Button } from 'react-bootstrap';
-// import Dropdown from 'react-bootstrap/Dropdown';
 import Container from 'react-bootstrap/Container';
-// import { Form, Row, Col } from 'react-bootstrap';
-// import InputGroup from 'react-bootstrap/InputGroup';
-// import { MathJax, MathJaxContext } from 'better-react-mathjax';
 import { HotTable } from '@handsontable/react';
 import 'handsontable/dist/handsontable.full.css';
 import 'handsontable/dist/handsontable.min.css';
-// import { std, min, mean, max, median, quantileSeq, sum } from 'mathjs';
-// import MLR from 'ml-regression-multivariate-linear';
 import { matrix, transpose, multiply, inv } from 'mathjs';
 
-// const config = {
-//   loader: { load: ['[tex]/html'] },
-//   tex: {
-//     packages: { '[+]': ['html'] },
-//     inlineMath: [
-//       ['$', '$'],
-//       ['\\(', '\\)'],
-//     ],
-//     displayMath: [
-//       ['$$', '$$'],
-//       ['\\[', '\\]'],
-//     ],
-//   },
-// };
+const handsOnData = [
+  [49, 124],
+  [69, 95],
+  [89, 71],
+  [99, 45],
+  [109, 18],
+  [16, 19],
+  [77, 88],
+];
 
 const hotSettings = {
-  data: [
-    [49, 124],
-    [69, 95],
-    [89, 71],
-    [99, 45],
-    [109, 18],
-    [16, 19],
-    [77, 88],
-  ],
+  data: handsOnData,
   // colHeaders: true,
   height: 'auto',
   licenseKey: 'non-commercial-and-evaluation',
@@ -59,10 +38,11 @@ export default function MeanrawTest() {
 
   useEffect(() => {}, [hotTableComponent]);
 
+  const lastColumnOfTwoDArray = (arr, n) => arr.map((x) => x[n]);
+
   const afterDataLoaded = () => {
-    // if(hotTableComponent)
-    // calculateLinearRegression();
-    console.log('afterDataLoaded');
+    const y = lastColumnOfTwoDArray(handsOnData, 0);
+    calculateLinearRegression(handsOnData, y);
   };
 
   const afterUpdateCell = (changes, source) => {

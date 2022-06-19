@@ -55,26 +55,30 @@ export default function MeanrawTest() {
   };
 
   const calculateLinearRegression = (allData, y) => {
-    let x = [];
-    for (let i = 0; i < allData.length; i++) {
-      let innerArr = [];
-      for (let j = 1; j < allData[0].length; j++) {
+    try {
+      let x = [];
+      for (let i = 0; i < allData.length; i++) {
+        let innerArr = [];
         innerArr.push(1);
-        innerArr.push(allData[i][j]);
+        for (let j = 1; j < allData[0].length; j++) {
+          innerArr.push(allData[i][j]);
+        }
+        x.push(innerArr);
       }
-      x.push(innerArr);
+      //Transpose of xMatrix
+      const transposeXMatrix = transpose(x);
+      // X transpose * X
+      const xTOfx = multiply(transposeXMatrix, x);
+      // X transpose * Y
+      const xTOfy = multiply(transposeXMatrix, y);
+      // X transpose * X inverse
+      const xTOfxInverse = inv(xTOfx);
+      const finalResult = multiply(xTOfxInverse, xTOfy);
+      setLinearRegression(finalResult);
+    } catch (e) {
+      console.error('Error:' + e);
+      alert('Something went wrong, please check your data again');
     }
-    //Transpose of xMatrix
-    const transposeXMatrix = transpose(x);
-    console.log('transposeXMatrix', transposeXMatrix);
-    // X transpose * X
-    const xTOfx = multiply(transposeXMatrix, x);
-    // X transpose * Y
-    const xTOfy = multiply(transposeXMatrix, y);
-    // X transpose * X inverse
-    const xTOfxInverse = inv(xTOfx);
-    const finalResult = multiply(xTOfxInverse, xTOfy);
-    setLinearRegression(finalResult);
   };
 
   return (

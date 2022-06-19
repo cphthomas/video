@@ -35,6 +35,8 @@ const hotSettings = {
     [1, 89, 71],
     [1, 99, 45],
     [1, 109, 18],
+    [1, 16, 19],
+    [1, 77, 88],
   ],
   // colHeaders: true,
   height: 'auto',

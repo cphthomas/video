@@ -69,12 +69,12 @@ export default function MeanrawTest() {
     if (changes) {
       let allData = [[]];
       allData = hotTableComponent.current.hotInstance.getData();
-      calculateLinearRegression(allData);
+      const y = hotTableComponent.current.hotInstance.getDataAtCol(0);
+      calculateLinearRegression(allData, y);
     }
   };
 
-  const calculateLinearRegression = (allData) => {
-    const y = hotTableComponent.current.hotInstance.getDataAtCol(0);
+  const calculateLinearRegression = (allData, y) => {
     let x = [];
     for (let i = 0; i < allData.length; i++) {
       let innerArr = [];

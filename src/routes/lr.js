@@ -1,114 +1,138 @@
-import React, { useState, useRef } from 'react';
-// import DropdownButton from 'react-bootstrap/DropdownButton';
-// import { Tooltip, OverlayTrigger, FormControl, Button } from 'react-bootstrap';
-// import Dropdown from 'react-bootstrap/Dropdown';
+import React, { useState, useRef, useEffect } from 'react';
 import Container from 'react-bootstrap/Container';
-// import { Form, Row, Col } from 'react-bootstrap';
-// import InputGroup from 'react-bootstrap/InputGroup';
-// import { MathJax, MathJaxContext } from 'better-react-mathjax';
 import { HotTable } from '@handsontable/react';
 import 'handsontable/dist/handsontable.full.css';
 import 'handsontable/dist/handsontable.min.css';
-// import { std, min, mean, max, median, quantileSeq, sum } from 'mathjs';
-import { inv, transpose, multiply } from 'mathjs';
-// import MLR from 'ml-regression-multivariate-linear';
+import { transpose, multiply, inv, subtract, mean } from 'mathjs';
+
+const handsOnData = [
+  [49, 124],
+  [69, 95],
+  [89, 71],
+  [99, 45],
+  [109, 18],
+  [16, 19],
+  [77, 88],
+];
 
 const hotSettings = {
-  data: [
-    [1, 2],
-    [2, 5],
-    [6, 7],
-    [8, 9],
-    [2, 3],
-  ],
+  data: handsOnData,
   // colHeaders: true,
-  height: 'auto',
+  // height: 'auto',
   licenseKey: 'non-commercial-and-evaluation',
   copyPaste: true,
   contextMenu: true,
-  colHeaders: ['Y', 'X<sub>1</sub>', 'X<sub>2</sub>'],
-  // contextMenu: ["copy", "cut", "paste"], => For copy/paste
-  // maxCols: 2, => For max limit of columns
-  // minCols: 1 => For min limit of columns
-  hiddenColumns: true,
+  colHeaders: ['Demand(Y)', 'Price(X)'],
+  // width: '100%',
+  height: 320,
+  // rowHeights: 23,
+  // rowHeaders: true,
+
+  // hiddenColumns: { columns: [1] },
   language: 'en-US',
   type: 'numeric',
   numericFormat: { culture: 'de-DE', pattern: '0,0' },
   allowInvalid: false,
   allowEmpty: false,
+  // columns: [{ hidden: true }, {}, {}],
 };
 
 export default function Lr() {
-  const hotTableComponent = useRef(null);
-  const [X, setX] = useState([
-    [1, 2],
-    [1, 5],
-    [1, 7],
-    [1, 9],
-    [1, 3],
-  ]);
-  const [Y, setY] = useState([[1], [2], [6], [8], [2]]);
-  function dimension(element) {
-    return [element.length, element[0].length];
-  }
-  // function t(matrix) {
-  //   return matrix[0].map((col, i) => matrix.map((row) => row[i]));
+  // function dimension(element) {
+  //   return [element.length, element[0].length];
   // }
-  // let MatrixProd = (A, B) =>
-  //   A.map((row, i) => B[0].map((_, j) => row.reduce((acc, _, n) => acc + A[i][n] * B[n][j], 0)));
-  // useEffect(() => {}, [hotTableComponent]);
+  const hotTableComponent = useRef(null);
+  const [linearRegression, setLinearRegression] = useState(0);
+
+  useEffect(() => {}, [hotTableComponent]);
+
+  const lastColumnOfTwoDArray = (arr, n) => arr.map((x) => x[n]);
+
+  const afterDataLoaded = () => {
+    const y = lastColumnOfTwoDArray(handsOnData, 0);
+    calculateLinearRegression(handsOnData, y);
+  };
 
   const afterUpdateCell = (changes, source) => {
     if (changes) {
       let allData = [[]];
-      changes.forEach(([row, col, oldValue, newValue]) => {
-        allData = hotTableComponent.current.hotInstance.getData();
-      });
-      const y = [hotTableComponent.current.hotInstance.getDataAtCol(0)];
-      setY(transpose(y));
-      let x = [];
-      for (let index = 1; index < allData[0].length; index++) {
-        const arr = hotTableComponent.current.hotInstance.getDataAtCol(index);
+      allData = hotTableComponent.current.hotInstance.getData();
+      const y = hotTableComponent.current.hotInstance.getDataAtCol(0);
+      calculateLinearRegression(allData, y);
+    }
+  };
 
-        x.push(arr);
-        x.push(Array(x[0].length).fill(1));
-        setX(transpose(x));
+  const calculateLinearRegression = (allData, y) => {
+    try {
+      let x = [];
+      for (let i = 0; i < allData.length; i++) {
+        let innerArr = [];
+        innerArr.push(1);
+        for (let j = 1; j < allData[0].length; j++) {
+          innerArr.push(allData[i][j]);
+        }
+        x.push(innerArr);
       }
+      //Transpose of xMatrix
+      const transposeXMatrix = transpose(x);
+      // X transpose * X
+      const xTOfx = multiply(transposeXMatrix, x);
+      // X transpose * Y
+      const xTOfy = multiply(transposeXMatrix, y);
+      // X transpose * X inverse
+      const xTOfxInverse = inv(xTOfx);
+      const betas = multiply(xTOfxInverse, xTOfy);
+      const predicted = multiply(x, betas);
+      const residuals = subtract(y, predicted);
+      const SSR = multiply(transpose(residuals), residuals);
+      const SST = multiply(transpose(subtract(y, mean(y))), subtract(y, mean(y)));
+      const R2 = 1 - SSR / SST;
+      const RMSE = Math.sqrt(SSR / (y.length - betas.length));
+      const betaserror = multiply(SSR / (y.length - betas.length), xTOfxInverse);
+      setLinearRegression([betas, predicted, residuals, SSR, SST, R2, RMSE, betaserror]);
+    } catch (e) {
+      console.error('Error:' + e);
+      alert('Something went wrong, please check your data again');
     }
   };
 
   return (
+    // <MathJaxContext hideUntilTypeset={'first'} config={config} version={3}>
     <main style={{ padding: '1rem 0' }}>
       <Container className="p-0">
         <div class="p-3 mb-2 bg-white text-black">
           <div class="card">
             <Container>
               <div class="p-3 mb-2 bg-white">
-                <HotTable ref={hotTableComponent} settings={hotSettings} afterChange={afterUpdateCell} />
+                <HotTable
+                  ref={hotTableComponent}
+                  settings={hotSettings}
+                  afterChange={afterUpdateCell}
+                  afterLoadData={afterDataLoaded}
+                />
               </div>
               <br />
-              <br />X = {X}
-              <br />Y = {Y}
+              Betas linearRegression[0] = {linearRegression[0]}
               <br />
-              dimension(X) = {dimension(X)}
+              Predicted linearRegression[1] = {linearRegression[1]}
               <br />
-              dimension(Y) = {dimension(Y)}
+              Residuals linearRegression[2] = {linearRegression[2]}
               <br />
-              transpose(X)= {transpose(X)}
+              SSR linearRegression[3] = {linearRegression[3]}
               <br />
-              multiply(transpose(X),X)= {multiply(X, transpose(X))}
+              SST linearRegression[4] = {linearRegression[4]}
               <br />
-              inv(multiply(transpose(X),X))= {inv(multiply(transpose(X), X))}
+              R2 linearRegression[5] = {linearRegression[5]}
               <br />
-              multiply(transpose(X),Y)= {multiply(transpose(X), Y)}
+              RSME linearRegression[6] = {linearRegression[6]}
               <br />
-              multiply(inv(multiply(transpose(X),X)),multiply(transpose(X),Y))=
-              {multiply(inv(multiply(transpose(X), X)), multiply(transpose(X), Y))}
+              betaserror linearRegression[7] = {linearRegression[7]}
               <br />
             </Container>
           </div>
         </div>
       </Container>
     </main>
+    // </MathJaxContext>
   );
 }

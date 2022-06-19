@@ -3,7 +3,7 @@ import Container from 'react-bootstrap/Container';
 import { HotTable } from '@handsontable/react';
 import 'handsontable/dist/handsontable.full.css';
 import 'handsontable/dist/handsontable.min.css';
-import { matrix, transpose, multiply, inv } from 'mathjs';
+import { transpose, multiply, inv } from 'mathjs';
 
 const handsOnData = [
   [49, 124],
@@ -18,11 +18,16 @@ const handsOnData = [
 const hotSettings = {
   data: handsOnData,
   // colHeaders: true,
-  height: 'auto',
+  // height: 'auto',
   licenseKey: 'non-commercial-and-evaluation',
   copyPaste: true,
   contextMenu: true,
   colHeaders: ['Demand(Y)', 'Price(X)'],
+  // width: '100%',
+  height: 320,
+  // rowHeights: 23,
+  // rowHeaders: true,
+
   // hiddenColumns: { columns: [1] },
   language: 'en-US',
   type: 'numeric',

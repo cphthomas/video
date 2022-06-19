@@ -59,42 +59,42 @@ export default function MeanrawTest() {
 
   useEffect(() => {}, [hotTableComponent]);
 
+  const afterDataLoaded = () => {
+    // if(hotTableComponent)
+    // calculateLinearRegression();
+    console.log('afterDataLoaded');
+  };
+
   const afterUpdateCell = (changes, source) => {
     if (changes) {
       let allData = [[]];
       allData = hotTableComponent.current.hotInstance.getData();
-      const y = hotTableComponent.current.hotInstance.getDataAtCol(0);
-      let x = [];
-      for (let i = 0; i < allData.length; i++) {
-        let innerArr = [];
-        for (let j = 1; j < allData[0].length; j++) {
-          innerArr.push(1);
-          innerArr.push(allData[i][j]);
-        }
-        x.push(innerArr);
-      }
-      console.log('Y', y);
-      console.log('X', x);
-      const yMatrix = matrix(y);
-      const xMatrix = matrix(x);
-      console.log('yMatrix', yMatrix);
-      console.log('xMatrix', xMatrix);
-      //Transpose of xMatrix
-      const transposeXMatrix = transpose(x);
-      console.log('transposeXMatrix', transposeXMatrix);
-      // X transpose * X
-      const xTOfx = multiply(transposeXMatrix, x);
-      console.log('xTOfx', xTOfx);
-      // X transpose * Y
-      const xTOfy = multiply(transposeXMatrix, y);
-      console.log('xTOfy', xTOfy);
-      // X transpose * X inverse
-      const xTOfxInverse = inv(xTOfx);
-      console.log('xTOfxInverse', xTOfxInverse);
-      const finalResult = multiply(xTOfxInverse, xTOfy);
-      console.log('finalResult', finalResult);
-      setLinearRegression(finalResult);
+      calculateLinearRegression(allData);
     }
+  };
+
+  const calculateLinearRegression = (allData) => {
+    const y = hotTableComponent.current.hotInstance.getDataAtCol(0);
+    let x = [];
+    for (let i = 0; i < allData.length; i++) {
+      let innerArr = [];
+      for (let j = 1; j < allData[0].length; j++) {
+        innerArr.push(1);
+        innerArr.push(allData[i][j]);
+      }
+      x.push(innerArr);
+    }
+    //Transpose of xMatrix
+    const transposeXMatrix = transpose(x);
+    console.log('transposeXMatrix', transposeXMatrix);
+    // X transpose * X
+    const xTOfx = multiply(transposeXMatrix, x);
+    // X transpose * Y
+    const xTOfy = multiply(transposeXMatrix, y);
+    // X transpose * X inverse
+    const xTOfxInverse = inv(xTOfx);
+    const finalResult = multiply(xTOfxInverse, xTOfy);
+    setLinearRegression(finalResult);
   };
 
   return (
@@ -109,7 +109,12 @@ export default function MeanrawTest() {
                 <li>Other columns will be X axis</li>
               </ul>
               <div class="p-3 mb-2 bg-white">
-                <HotTable ref={hotTableComponent} settings={hotSettings} afterChange={afterUpdateCell} />
+                <HotTable
+                  ref={hotTableComponent}
+                  settings={hotSettings}
+                  afterChange={afterUpdateCell}
+                  afterLoadData={afterDataLoaded}
+                />
               </div>
               <br />
 

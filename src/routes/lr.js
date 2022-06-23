@@ -6,6 +6,7 @@ import 'handsontable/dist/handsontable.min.css';
 import { transpose, multiply, inv, subtract, mean } from 'mathjs';
 var cdft = require('@stdlib/stats/base/dists/t/cdf');
 var quantilet = require('@stdlib/stats-base-dists-t-quantile');
+var cdff = require('@stdlib/stats-base-dists-f-cdf');
 
 const handsOnData = [
   [49, 124],
@@ -108,7 +109,8 @@ export default function Lr() {
       const tstar = Math.abs(quantilet(0.025, degreesOfFreedom));
       const lowerBetaKi = betas.map((e, i) => e - tstar * betaserrors[i]);
       const upperBetaKi = betas.map((e, i) => e + tstar * betaserrors[i]);
-
+      const Fstat = (SST - SSR) / (betas.length - 1) / (SSR / (observations - betas.length));
+      const Fpvalue = 1 - cdff(Fstat, betas.length - 1, degreesOfFreedom);
       setLinearRegression([
         betas,
         predicted,
@@ -124,6 +126,8 @@ export default function Lr() {
         degreesOfFreedom,
         lowerBetaKi,
         upperBetaKi,
+        Fstat,
+        Fpvalue,
       ]);
     } catch (e) {
       console.error('Error:' + e);
@@ -146,6 +150,10 @@ export default function Lr() {
                   afterLoadData={afterDataLoaded}
                 />
               </div>
+              Fpvalue linearRegression[15] = {linearRegression[15]}
+              <br />
+              Fstat linearRegression[14] = {linearRegression[14]}
+              <br />
               upperBetaKi linearRegression[13] = {linearRegression[13]}
               <br />
               lowerBetaKi linearRegression[12] = {linearRegression[12]}

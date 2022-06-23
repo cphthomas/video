@@ -4,6 +4,8 @@ import { HotTable } from '@handsontable/react';
 import 'handsontable/dist/handsontable.full.css';
 import 'handsontable/dist/handsontable.min.css';
 import { transpose, multiply, inv, subtract, mean } from 'mathjs';
+var cdft = require('@stdlib/stats/base/dists/t/cdf');
+var quantilet = require('@stdlib/stats-base-dists-t-quantile');
 
 const handsOnData = [
   [49, 124],
@@ -88,8 +90,24 @@ export default function Lr() {
       const SST = multiply(transpose(subtract(y, mean(y))), subtract(y, mean(y)));
       const R2 = 1 - SSR / SST;
       const RMSE = Math.sqrt(SSR / (y.length - betas.length));
-      const betaserror = multiply(SSR / (y.length - betas.length), xTOfxInverse);
-      const xTOfxInversesqrt = RMSE * Math.pow(xTOfxInverse[0][0], 0.5);
+      // const betaserror = multiply(SSR / (y.length - betas.length), xTOfxInverse);
+
+      const betaserrors = [];
+      // const diagonal = xTOfxInverse.map((x[n][n],) => x[0]);
+      for (let i = 0; i < xTOfxInverse.length; i++) {
+        for (let j = 0; j < xTOfxInverse[0].length; j++) {
+          if (i === j) {
+            betaserrors[i] = RMSE * Math.pow(xTOfxInverse[i][j], 0.5);
+          }
+        }
+      }
+      const tstats = betas.map((e, i) => e / betaserrors[i]);
+      const observations = y.length;
+      const degreesOfFreedom = observations - betas.length;
+      const pvalues = tstats.map((e) => 2 * (1 - cdft(Math.abs(e), degreesOfFreedom)));
+      const tstar = Math.abs(quantilet(0.025, degreesOfFreedom));
+      const lowerBetaKi = betas.map((e, i) => e - tstar * betaserrors[i]);
+      const upperBetaKi = betas.map((e, i) => e + tstar * betaserrors[i]);
 
       setLinearRegression([
         betas,
@@ -99,9 +117,13 @@ export default function Lr() {
         SST,
         R2,
         RMSE,
-        betaserror,
-        xTOfxInverse,
-        xTOfxInversesqrt,
+        betaserrors,
+        tstats,
+        pvalues,
+        observations,
+        degreesOfFreedom,
+        lowerBetaKi,
+        upperBetaKi,
       ]);
     } catch (e) {
       console.error('Error:' + e);
@@ -124,16 +146,19 @@ export default function Lr() {
                   afterLoadData={afterDataLoaded}
                 />
               </div>
-              {/* 34,62*0,5895495921503724^0,5 */}
-              xTOfxInversesqrt linearRegression[9] = {linearRegression[9]}
+              upperBetaKi linearRegression[13] = {linearRegression[13]}
               <br />
-              xTOfxInverse linearRegression[8] = {linearRegression[8]}
+              lowerBetaKi linearRegression[12] = {linearRegression[12]}
+              <br />
+              degreesOfFreedom linearRegression[11] = {linearRegression[11]}
+              <br />
+              observations linearRegression[10] = {linearRegression[10]}
               <br />
               Betas linearRegression[0] = {linearRegression[0]}
               <br />
-              Predicted linearRegression[1] = {linearRegression[1]}
+              {/* Predicted linearRegression[1] = {linearRegression[1]} */}
               <br />
-              Residuals linearRegression[2] = {linearRegression[2]}
+              {/* Residuals linearRegression[2] = {linearRegression[2]} */}
               <br />
               SSR linearRegression[3] = {linearRegression[3]}
               <br />
@@ -143,7 +168,11 @@ export default function Lr() {
               <br />
               RSME linearRegression[6] = {linearRegression[6]}
               <br />
-              betaserror linearRegression[7] = {linearRegression[7]}
+              betaserrors linearRegression[7] = {linearRegression[7]}
+              <br />
+              tstats linearRegression[8] = {linearRegression[8]}
+              <br />
+              pvalues linearRegression[9] = {linearRegression[9]}
               <br />
             </Container>
           </div>

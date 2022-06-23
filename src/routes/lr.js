@@ -89,7 +89,20 @@ export default function Lr() {
       const R2 = 1 - SSR / SST;
       const RMSE = Math.sqrt(SSR / (y.length - betas.length));
       const betaserror = multiply(SSR / (y.length - betas.length), xTOfxInverse);
-      setLinearRegression([betas, predicted, residuals, SSR, SST, R2, RMSE, betaserror]);
+      const xTOfxInversesqrt = RMSE * Math.pow(xTOfxInverse[0][0], 0.5);
+
+      setLinearRegression([
+        betas,
+        predicted,
+        residuals,
+        SSR,
+        SST,
+        R2,
+        RMSE,
+        betaserror,
+        xTOfxInverse,
+        xTOfxInversesqrt,
+      ]);
     } catch (e) {
       console.error('Error:' + e);
       alert('Something went wrong, please check your data again');
@@ -111,6 +124,10 @@ export default function Lr() {
                   afterLoadData={afterDataLoaded}
                 />
               </div>
+              {/* 34,62*0,5895495921503724^0,5 */}
+              xTOfxInversesqrt linearRegression[9] = {linearRegression[9]}
+              <br />
+              xTOfxInverse linearRegression[8] = {linearRegression[8]}
               <br />
               Betas linearRegression[0] = {linearRegression[0]}
               <br />

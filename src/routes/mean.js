@@ -1587,9 +1587,9 @@ export default function Mean() {
                                                         nulhypotesen {`$H_{0}$`}.<br></br>
                                                        
                                                         t-teststørrelsen angiver forskellen mellem {`$\\hat{\\mu}$`} og{' '}
-                                                        {`$\\mu_{0}$`}, divideret med SEM standardfejlen for middelværdien  {
-                                                            `$ \\frac{\\hat{\\sigma}}{\\sqrt{n}} = \\frac{${std}}{\\sqrt{${b}}} \\approx ${numberFormat4(stdev)} $`
-                                                          }:
+                                                        {`$\\mu_{0}$`}, divideret med SEM standardfejlen for middelværdien   <span>{
+                                                            `$ \\frac{\\hat{\\sigma}}{\\sqrt{n}} = \\frac{${std}}{\\sqrt{${b}}} \\approx {${numberFormat4(stdev)}} $`
+                                                          }</span>:
                                                         <span>{`$$t-teststørrelsen = \\frac{\\hat{\\mu}-\\mu_{0}}{SE} \\approx \\frac{${numberFormat4(
                                                           a
                                                         )}-${c }}{${numberFormat4(

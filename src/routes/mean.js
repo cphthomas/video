@@ -90,8 +90,8 @@ export default function Mean() {
     }
   }
 
-  var p = a / b;
-  var ptest = c;
+  // var p = a / b;
+  // var ptest = c;
   var [fpctext, setfpctext] = useState('Sæt kendt endelig populationsstørrelse');
   const toggleDisplay = () => {
     if (fpctext === 'Sæt kendt endelig populationsstørrelse') {
@@ -106,12 +106,12 @@ export default function Mean() {
     fpctext === 'Sæt kendt endelig populationsstørrelse' ? 'btn btn-primary btn-sm' : 'btn btn-danger btn-sm';
   var stdev = (std / Math.sqrt(b)) * fpc; //SEM
   var percentile = quantilet(1 - significancelevel / 2, b - 1);
-  var lower = a - percentile * stdev;
-  var upper = a + percentile * stdev;
+  var lower = +a - percentile * stdev;
+  var upper = +a + percentile * stdev;
   // var forudsætning = b * p * (1 - p);
-  var fejlmargin = (upper * 100 - lower * 100) / 2;
+  var fejlmargin = (upper  - lower ) / 2;
   var [d, setd] = useState(+Math.floor(fejlmargin).toFixed(2));
-  var ztest = (a - ptest) / stdev;
+  var ztest = (a - c) / stdev;
   var pv1ned = cdft(ztest, b - 1);
   var pv1op = 1 - cdft(ztest, b - 1);
   var pv2 = 2 * Math.min(+pv1ned, +pv1op);
@@ -125,7 +125,7 @@ export default function Mean() {
 
   Math.abs(ztest) < 5 ? (factor = 1) : (factor = Math.abs(ztest / 5));
 
-  var minsample = (norminv(1 - significancelevel / 2, 0, 1) / (d / 100)) ** 2 * (p * (1 - p)) * fpc;
+  var minsample = (std*norminv((1 - significancelevel / 2), 0, 1)/ d )**2   * fpc;
   var N = 500;
   var x = [...Array(N + 1).keys()].map((i) => (factor * (i - N / 2)) / 50);
   var y = x.map((x) => pdft(x, b - 1));
@@ -661,7 +661,8 @@ export default function Mean() {
                       </OverlayTrigger>
                     </span>
                     <p class="lead text-muted">
-                      Analyse af en kvantitativ variabel, tests af middel og standardafvigelse
+                      Analyse af en kvantitativ variabel, tests af middel og standardafvigelse<br></br>
+                      std: {std}
                     </p>
 
                     {/* Signifikansniveau########################################################################################################################################################################################## */}
@@ -1527,16 +1528,16 @@ export default function Mean() {
                                                   <div>
                                                     <div>
                                                       <MathJax dynamic>
-                                                        Punktestimatet kan udregnes til:
-                                                        <span>{`$$\\bar{x} = \\hat{\\mu} = \\frac{succeser}{n} = \\frac{${a}}{${b}} \\approx ${numberFormat4(
-                                                          p
+                                                        Punktestimatet for middelværdien er udregnet til:
+                                                        <span>{`$$\\bar{x} = \\hat{\\mu} = ${numberFormat4(
+                                                          a
                                                         )}$$`}</span>
                                                         <hr></hr>
                                                         {(1 - significancelevel) * 100}% konfidensintervallet kan
                                                         udregnes ved nedenstående formel:
                                                         <span>
                                                           {
-                                                            '$$ \\hat{p} \\pm z_{1-\\frac{\\alpha}{2}}\\cdot \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}} \\approx $$'
+                                                            '$$ \\hat{\\mu} \\pm t_{1-\\frac{\\alpha}{2},n-1}\\cdot \\frac{\\hat{\\sigma}}{\\sqrt{n}} \\approx $$'
                                                           }
                                                         </span>
                                                         <span>
@@ -1544,23 +1545,27 @@ export default function Mean() {
                                                           {numberFormat4(significancelevel * 100)}% signifikansniveauet.
                                                           <br></br>
                                                           Hvor{' '}
-                                                          {`$z_{1-\\frac{\\alpha}{2}}=z_{1-\\frac{${significancelevel}}{2}}=z_{1-${
+                                                          {`$t_{1-\\frac{\\alpha}{2},n-1}=t_{1-\\frac{${significancelevel}}{2},${b}-1}=t_{1-${
                                                             significancelevel / 2
-                                                          }}=z_{${1 - significancelevel / 2}}=$`}{' '}
+                                                          } ${b-1}}=t_{${1 - significancelevel / 2}, ${b-1}}=$`}{' '}
                                                           {numberFormat4(q2)} er {100 * (1 - significancelevel / 2)}%
-                                                          fraktilen for t-fordelingen dvs. standard normalfordelingen.
+                                                          fraktilen for t-fordelingen med n-1 = {b-1} frihedsgrader.<br></br>
+                                                          Hvor 
+                                                          
+                                                          {
+                                                            `$ \\frac{\\hat{\\sigma}}{\\sqrt{n}} \\approx \\frac{${std}}{\\sqrt{${b}}} $`
+                                                          }
+                                                         {' '}er standardfejlen for middelværdien ofte kaldet SE eller SEM.
                                                         </span>
-                                                        <span>{`$$ ${numberFormat4(p)} \\pm ${numberFormat4(
+                                                        <span>{`$$ ${numberFormat4(a)} \\pm ${numberFormat4(
                                                           q2
-                                                        )} \\cdot \\sqrt{\\frac{${numberFormat4(p)}(1-${numberFormat4(
-                                                          p
-                                                        )})}{${b}}} \\approx $$`}</span>
-                                                        <span>{`$$[ ${numberFormat4(lower * 100)}\\%;${numberFormat4(
-                                                          upper * 100
-                                                        )}\\%]$$`}</span>
+                                                        )} \\cdot \\frac{${std}}{\\sqrt{${b}}} \\approx $$`}</span>
+                                                        <span>{`$$[ ${numberFormat4(lower)};${numberFormat4(
+                                                          upper 
+                                                        )}]$$`}</span>
                                                         Vi kan med {(1 - significancelevel) * 100}% sandsynlighed sige
                                                         at middelværdien i populationen ligger mellem{' '}
-                                                        {numberFormat4(lower * 100)}% og {numberFormat4(upper * 100)}%
+                                                        {numberFormat4(lower)} og {numberFormat4(upper )}
                                                         <hr></hr>
                                                         Fejlmarginen er den halve længde af konfidensintervallet dvs.
                                                         øvre minus nedre grænse for konfidensintervallet divideret med
@@ -1569,44 +1574,27 @@ export default function Mean() {
                                                           {`$$ \\frac{${numberFormat4(upper)}-${numberFormat4(
                                                             lower
                                                           )}}{2}\\approx${numberFormat4(
-                                                            ((upper - lower) / 2) * 100
-                                                          )}\\% $$`}
+                                                            ((upper - lower) / 2) 
+                                                          )} $$`}
                                                         </span>
-                                                        Eller direkte ved formlen:
-                                                        <span>{`$$z_{1-\\frac{\\alpha}{2}}\\cdot \\sqrt{\\frac{\\hat{p}(1-\\hat{p})}{n}} \\approx $$'`}</span>
-                                                        <span>
-                                                          {`$$ ${numberFormat4(
-                                                            q2
-                                                          )} \\cdot \\sqrt{\\frac{${numberFormat4(p)}(1-${numberFormat4(
-                                                            p
-                                                          )})}{${b}}} \\approx ${numberFormat4(
-                                                            ((upper - lower) / 2) * 100
-                                                          )}\\% $$`}
-                                                        </span>
+                                                        
                                                         <hr></hr>
                                                         Hvis vi ikke kan afvise nulhypotesen, betyder det at den sande
                                                         populations parameter {`$\\mu=\\mu_{0}$`}. Så gælder fra CLT, at
                                                         stikprøvefordelingen er normalfordelt med middelværdi{' '}
-                                                        {`$\\mu=\\mu_{0}$`}.<br></br>
-                                                        For at finde t-teststørrelsen, skal vi bestemme standardfejlen
-                                                        for middelværdien SE ved formlen herunder, hvor{' '}
+                                                        {`$\\mu=\\mu_{0}$`}. Hvor{' '}
                                                         {`$\\mu_{0}=${c}$`} er den middelværdi vi tester under
-                                                        nulhypotesen {`$H_{0}$`}:
-                                                        <span>
-                                                          {`$$SE = \\sqrt{\\frac{\\mu_{0}(1-\\mu_{0})}{n}}=\\sqrt{\\frac{${
-                                                            c / 100
-                                                          }(1-${c / 100})}{${b}}}\\approx ${numberFormat4(
-                                                            Math.pow(((c / 100) * (1 - c / 100)) / b, 0.5)
-                                                          )}$$`}
-                                                        </span>
-                                                        t-teststørrelsen angiver forskellen mellem {`$\\hat{p}$`} og{' '}
-                                                        {`$p_{0}$`}, divideret med SE for at vi kan benytte
-                                                        t-fordelingen:
-                                                        <span>{`$$t-teststørrelsen = \\frac{\\hat{p}-p_{0}}{SE} \\approx \\frac{${numberFormat4(
-                                                          p
-                                                        )}-${c / 100}}{${numberFormat4(
-                                                          Math.pow(((c / 100) * (1 - c / 100)) / b, 0.5)
-                                                        )}} \\approx ${numberFormat4(ztest)} $$`}</span>
+                                                        nulhypotesen {`$H_{0}$`}.<br></br>
+                                                       
+                                                        t-teststørrelsen angiver forskellen mellem {`$\\hat{\\mu}$`} og{' '}
+                                                        {`$\\mu_{0}$`}, divideret med SEM standardfejlen for middelværdien  {
+                                                            `$ \\frac{\\hat{\\sigma}}{\\sqrt{n}} = \\frac{${std}}{\\sqrt{${b}}} \\approx ${numberFormat4(stdev)} $`
+                                                          }:
+                                                        <span>{`$$t-teststørrelsen = \\frac{\\hat{\\mu}-\\mu_{0}}{SE} \\approx \\frac{${numberFormat4(
+                                                          a
+                                                        )}-${c }}{${numberFormat4(
+                                                          stdev
+                                                        )}} \\approx ${numberFormat4((a-c)/stdev)} $$`}</span>
                                                       </MathJax>
                                                     </div>
                                                   </div>
@@ -1647,19 +1635,19 @@ export default function Mean() {
                               <div class="card">
                                 <div class="card-body">
                                   <div>
-                                    <Form.Text className="text-muted">Ønsket fejlmargin i %</Form.Text>
+                                    <Form.Text className="text-muted">Ønsket fejlmargin</Form.Text>
                                     {/* <Col class="col-6"> */}
                                     <InputGroup size="sm">
                                       <OverlayTrigger
-                                        placement="bottom"
+                                        placement="top"
                                         delay={{
                                           show: 100,
                                           hide: 100,
                                         }}
                                         overlay={
                                           <Tooltip>
-                                            Den nuværende fejlmargin er {numberFormat4(fejlmargin)}%, den ønskede
-                                            fejlmargin er {d}%
+                                            Den nuværende fejlmargin er {numberFormat4(fejlmargin)}, den ønskede
+                                            fejlmargin er {d}
                                           </Tooltip>
                                         }
                                       >
@@ -1686,21 +1674,21 @@ export default function Mean() {
                                     <span style={{ backgroundColor: '#80ff00' }}>
                                       stikprøvestørrelse på {Math.ceil(minsample)}
                                     </span>
-                                    , hvis man ønsker en fejlmargin på {d}%.
+                                    , hvis man ønsker en fejlmargin på {d}.
                                     {+d < +fejlmargin && (
                                       <span>
-                                        <br></br>Da den nuværende fejlmargin på {numberFormat4(fejlmargin)}% er større
+                                        <br></br>Da den nuværende fejlmargin på {numberFormat4(fejlmargin)} er større
                                         end {d}
-                                        %, skal man have en stikprøve størrelse på mindst {Math.ceil(minsample)} for at
-                                        opnå fejlmarginen på kun {d}%.
+                                        , skal man have en stikprøve størrelse på mindst {Math.ceil(minsample)} for at
+                                        opnå fejlmarginen på kun {d}.
                                       </span>
                                     )}
                                     {+fejlmargin < +d && (
                                       <span>
-                                        <br></br>Da den nuværende fejlmargin på {numberFormat4(fejlmargin)}% er mindre
+                                        <br></br>Da den nuværende fejlmargin på {numberFormat4(fejlmargin)} er mindre
                                         end {d}
-                                        %, kunne man have begrænset stikprøve størrelsen til {Math.ceil(minsample)} for
-                                        at opnå fejlmarginen på kun {d}%.
+                                        , kunne man have begrænset stikprøve størrelsen til {Math.ceil(minsample)} for
+                                        at opnå fejlmarginen på {d}.
                                       </span>
                                     )}
                                   </p>

@@ -9,6 +9,7 @@ import Meanraw from './routes/meanraw';
 import MeanrawTest from './routes/meanraw_1';
 import Lr from './routes/lr';
 import Mean from './routes/mean';
+import Middel from './routes/middel';
 
 import Normal from './routes/normal';
 import Binomial from './routes/binomial';
@@ -37,6 +38,7 @@ root.render(
         <Route path="poisson" element={<Poisson />}></Route>
         <Route path="chi2" element={<Chi2 />}></Route>
         <Route path="anova" element={<Anova />}></Route>
+        <Route path="middel" element={<Middel />}></Route>
         <Route
           path="*"
           element={

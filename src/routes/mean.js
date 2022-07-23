@@ -90,8 +90,7 @@ export default function Mean() {
     }
   }
 
-  // var p = a / b;
-  // var ptest = c;
+  
   var [fpctext, setfpctext] = useState('Sæt kendt endelig populationsstørrelse');
   const toggleDisplay = () => {
     if (fpctext === 'Sæt kendt endelig populationsstørrelse') {
@@ -111,9 +110,9 @@ export default function Mean() {
   // var forudsætning = b * p * (1 - p);
   var fejlmargin = (upper  - lower ) / 2;
   var [d, setd] = useState(+Math.floor(fejlmargin).toFixed(2));
-  var ztest = (a - c) / stdev;
-  var pv1ned = cdft(ztest, b - 1);
-  var pv1op = 1 - cdft(ztest, b - 1);
+  var ttest = (a - c) / stdev;
+  var pv1ned = cdft(ttest, b - 1);
+  var pv1op = 1 - cdft(ttest, b - 1);
   var pv2 = 2 * Math.min(+pv1ned, +pv1op);
   var factor = 1;
   var chitest = ((b - 1) * Math.pow(std, 2)) / Math.pow(e, 2);
@@ -123,7 +122,7 @@ export default function Mean() {
   var lowersigma = Math.pow(((+b - 1) * Math.pow(+std, 2)) / quantilechi(1 - significancelevel / 2, b - 1), 0.5);
   var uppersigma = Math.pow(((+b - 1) * Math.pow(+std, 2)) / quantilechi(significancelevel / 2, b - 1), 0.5);
 
-  Math.abs(ztest) < 5 ? (factor = 1) : (factor = Math.abs(ztest / 5));
+  Math.abs(ttest) < 5 ? (factor = 1) : (factor = Math.abs(ttest / 5));
 
   var minsample = (std*norminv((1 - significancelevel / 2), 0, 1)/ d )**2   * fpc;
   var N = 500;
@@ -181,22 +180,22 @@ export default function Mean() {
   });
 
   var xned = x.filter(function (x) {
-    return x < ztest;
+    return x < ttest;
   });
-  xned.push(ztest);
+  xned.push(ttest);
   var yned = xned.map((xned) => pdft(xned, b - 1));
-  xned.push(ztest);
+  xned.push(ttest);
   yned.push(0);
   // var coordinatesned = xned.map(function (v, i) {
   //   return [v, yned[i]];
   // });
 
   var xop = x.filter(function (x) {
-    return x > ztest;
+    return x > ttest;
   });
-  xop.unshift(ztest);
+  xop.unshift(ttest);
   var yop = xop.map((xop) => pdft(xop, b - 1));
-  xop.unshift(ztest);
+  xop.unshift(ttest);
   xop.push(5);
   yop.unshift(0);
   yop.push(0);
@@ -221,7 +220,7 @@ export default function Mean() {
     },
     subtitle: {
       useHTML: true,
-      text: 'H<sub>0</sub>:p≤' + c + '%   |  H<sub>1</sub>:p>' + c + '%',
+      text: 'H<sub>0</sub>:&mu;≤' + c + '%   |  H<sub>1</sub>:&mu;>' + c + '%',
     },
     annotations: [
       {
@@ -240,19 +239,19 @@ export default function Mean() {
             point: {
               xAxis: 0,
               yAxis: 0,
-              x: ztest,
+              x: ttest,
               y: 0.45,
             },
             text:
               +pv1op <= significancelevel
                 ? 't-teststørrelsen er ' +
-                  numberFormat4(ztest) +
+                  numberFormat4(ttest) +
                   '<br/>Forkast nulhypotesen' +
                   '<br/>P-værdien er ' +
                   numberFormat4(pv1op * 100) +
                   '%'
                 : 't-teststørrelsen er ' +
-                  numberFormat4(ztest) +
+                  numberFormat4(ttest) +
                   '<br/>Forkast IKKE nulhypotesen' +
                   '<br/>P-værdien er ' +
                   numberFormat4(pv1op * 100) +
@@ -321,8 +320,8 @@ export default function Mean() {
         },
         name: 't-teststørrelse',
         data: [
-          [ztest, 0],
-          [ztest, 0.45],
+          [ttest, 0],
+          [ttest, 0.45],
         ],
       },
     ],
@@ -348,7 +347,7 @@ export default function Mean() {
     },
     subtitle: {
       useHTML: true,
-      text: 'H<sub>0</sub>:p≥' + c + '%   |  H<sub>1</sub>:p<' + c + '%',
+      text: 'H<sub>0</sub>:&mu;≥' + c + '%   |  H<sub>1</sub>:&mu;<' + c + '%',
     },
     annotations: [
       {
@@ -367,19 +366,19 @@ export default function Mean() {
             point: {
               xAxis: 0,
               yAxis: 0,
-              x: ztest,
+              x: ttest,
               y: 0.45,
             },
             text:
               +pv1ned <= significancelevel
                 ? 't-teststørrelsen er ' +
-                  numberFormat4(ztest) +
+                  numberFormat4(ttest) +
                   '<br/>Forkast nulhypotesen' +
                   '<br/>P-værdien er ' +
                   numberFormat4(pv1ned * 100) +
                   '%'
                 : 't-teststørrelsen er ' +
-                  numberFormat4(ztest) +
+                  numberFormat4(ttest) +
                   '<br/>Forkast IKKE nulhypotesen' +
                   '<br/>P-værdien er ' +
                   numberFormat4(pv1ned * 100) +
@@ -435,8 +434,8 @@ export default function Mean() {
         },
         name: 't-teststørrelse',
         data: [
-          [ztest, 0],
-          [ztest, 0.45],
+          [ttest, 0],
+          [ttest, 0.45],
         ],
       },
       // {
@@ -473,19 +472,19 @@ export default function Mean() {
             point: {
               xAxis: 0,
               yAxis: 0,
-              x: ztest,
+              x: ttest,
               y: 0.45,
             },
             text:
               +pv2 <= significancelevel
                 ? 't-teststørrelsen er ' +
-                  numberFormat4(ztest) +
+                  numberFormat4(ttest) +
                   '<br/>Forkast nulhypotesen' +
                   '<br/>P-værdien er ' +
                   numberFormat4(pv2 * 100) +
                   '%'
                 : 't-teststørrelsen er ' +
-                  numberFormat4(ztest) +
+                  numberFormat4(ttest) +
                   '<br/>Forkast IKKE nulhypotesen' +
                   '<br/>P-værdien er ' +
                   numberFormat4(pv2 * 100) +
@@ -560,7 +559,7 @@ export default function Mean() {
     },
     subtitle: {
       useHTML: true,
-      text: 'H<sub>0</sub>:p=' + c + '%   |  H<sub>1</sub>:p≠' + c + '%',
+      text: 'H<sub>0</sub>:&mu;=' + c + '%   |  H<sub>1</sub>:&mu;≠' + c + '%',
     },
     credits: {
       enabled: false,
@@ -583,8 +582,8 @@ export default function Mean() {
         },
         name: 't-teststørrelse',
         data: [
-          [-ztest, 0],
-          [-ztest, pdft(ztest, b - 1)],
+          [-ttest, 0],
+          [-ttest, pdft(ttest, b - 1)],
         ],
       },
       {
@@ -598,8 +597,8 @@ export default function Mean() {
         },
         name: 't-teststørrelse',
         data: [
-          [ztest, 0],
-          [ztest, 0.45],
+          [ttest, 0],
+          [ttest, 0.45],
         ],
       },
       // {
@@ -662,7 +661,7 @@ export default function Mean() {
                     </span>
                     <p class="lead text-muted">
                       Analyse af en kvantitativ variabel, tests af middel og standardafvigelse<br></br>
-                      std: {std}
+                      
                     </p>
 
                     {/* Signifikansniveau########################################################################################################################################################################################## */}
@@ -1590,7 +1589,7 @@ export default function Mean() {
                                                         {`$\\mu_{0}$`}, divideret med SEM standardfejlen for middelværdien   <span>{
                                                             `$ \\frac{\\hat{\\sigma}}{\\sqrt{n}} = \\frac{${std}}{\\sqrt{${b}}} \\approx {${numberFormat4(stdev)}} $`
                                                           }</span>:
-                                                        <span>{`$$t-teststørrelsen = \\frac{\\hat{\\mu}-\\mu_{0}}{SE} \\approx \\frac{${numberFormat4(
+                                                        <span>{`$$t-teststørrelsen = \\frac{\\hat{\\mu}-\\mu_{0}}{SEM} \\approx \\frac{${numberFormat4(
                                                           a
                                                         )}-${c }}{${numberFormat4(
                                                           stdev

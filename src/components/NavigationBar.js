@@ -49,6 +49,9 @@ export const NavigationBar = () => (
                 <Dropdown.Item size="sm" href="/mean" target="_blank">
                   1 Kvantitativ variabel
                 </Dropdown.Item>
+                <Dropdown.Item size="sm" href="/middel" target="_blank">
+                 middel
+                </Dropdown.Item>
                 <Dropdown.Item size="sm" href="/andel" target="_blank">
                   1 Kvalitativ variabel
                 </Dropdown.Item>

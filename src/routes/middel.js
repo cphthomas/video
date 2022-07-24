@@ -5,7 +5,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { HotTable } from '@handsontable/react';
 import 'handsontable/dist/handsontable.full.css';
 import 'handsontable/dist/handsontable.min.css';
-import {  mean } from 'mathjs';
+import { mean } from 'mathjs';
 // import Toggle from './ToggleRenderProps';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
@@ -39,16 +39,7 @@ var quantilet = require('@stdlib/stats/base/dists/t/quantile');
 var cdfchi = require('@stdlib/stats-base-dists-chisquare-cdf');
 var quantilechi = require('@stdlib/stats/base/dists/chisquare/quantile');
 
-
-const handsOnData = [
-  [4],
-  [8],
-  [10],
-  [2],
-  [2],
-  [2],
-  [2],
-];
+const handsOnData = [[4], [8], [10], [2], [2], [2], [2]];
 
 const hotSettings = {
   data: handsOnData,
@@ -72,8 +63,6 @@ const hotSettings = {
   allowEmpty: false,
   // columns: [{ hidden: true }, {}, {}],
 };
-
-
 
 const config = {
   loader: { load: ['[tex]/html'] },
@@ -100,7 +89,7 @@ export default function Middel() {
 
   const afterDataLoaded = () => {
     // const y = lastColumnOfTwoDArray(handsOnData, 0);
-    const y = handsOnData
+    const y = handsOnData;
     calculateQuant(y);
   };
 
@@ -113,7 +102,7 @@ export default function Middel() {
     }
   };
 
-  const calculateQuant = ( y) => {
+  const calculateQuant = (y) => {
     try {
       // let z = [];
       // for (let i = 0; i < allData.length; i++) {
@@ -134,17 +123,13 @@ export default function Middel() {
       // const xTOfxInverse = inv(xTOfx);
       const middel = mean(y);
       const antal = y.length;
-      // const standardafv 
-      setCalcQuant([
-        middel,
-        antal,
-       
-      ]);
+      // const standardafv
+      setCalcQuant([middel, antal]);
     } catch (e) {
       console.error('Error:' + e);
       alert('Something went wrong, please check your data again');
     }
-  }
+  };
 
   var [a, seta] = useState(+(10).toFixed(2)); //middelværdi
   var [b, setb] = useState(+(50).toFixed(2)); //stikprøvestørrelse
@@ -186,7 +171,6 @@ export default function Middel() {
     }
   }
 
-  
   var [fpctext, setfpctext] = useState('Sæt kendt endelig populationsstørrelse');
   const toggleDisplay = () => {
     if (fpctext === 'Sæt kendt endelig populationsstørrelse') {
@@ -204,7 +188,7 @@ export default function Middel() {
   var lower = +a - percentile * stdev;
   var upper = +a + percentile * stdev;
   // var forudsætning = b * p * (1 - p);
-  var fejlmargin = (upper  - lower ) / 2;
+  var fejlmargin = (upper - lower) / 2;
   var [d, setd] = useState(+Math.floor(fejlmargin).toFixed(2));
   var ttest = (a - c) / stdev;
   var pv1ned = cdft(ttest, b - 1);
@@ -220,7 +204,7 @@ export default function Middel() {
 
   Math.abs(ttest) < 5 ? (factor = 1) : (factor = Math.abs(ttest / 5));
 
-  var minsample = (std*norminv((1 - significancelevel / 2), 0, 1)/ d )**2   * fpc;
+  var minsample = ((std * norminv(1 - significancelevel / 2, 0, 1)) / d) ** 2 * fpc;
   var N = 500;
   var x = [...Array(N + 1).keys()].map((i) => (factor * (i - N / 2)) / 50);
   var y = x.map((x) => pdft(x, b - 1));
@@ -757,20 +741,22 @@ export default function Middel() {
                     </span>
                     <p class="lead text-muted">
                       Analyse af en kvantitativ variabel, tests af middel og standardafvigelse<br></br>
-                      
                     </p>
                     <HotTable
-                  ref={hotTableComponent}
-                  settings={hotSettings}
-                  afterChange={afterUpdateCell}
-                  afterLoadData={afterDataLoaded}
-                />
-                <br />
-              middel calcQuant[0] = {calcQuant[0]}<br></br>
-              antal calcQuant[1] = {calcQuant[1]}<br></br>
-              {y.length}<br></br>
-              <br />
-
+                      ref={hotTableComponent}
+                      settings={hotSettings}
+                      afterChange={afterUpdateCell}
+                      afterLoadData={afterDataLoaded}
+                    />
+                    <br />
+                    Beregninger baseret på ovenstående skema<br></br>
+                    middel calcQuant[0] = {calcQuant[0]}
+                    <br></br>
+                    antal calcQuant[1] = {calcQuant[1]}
+                    <br></br>
+                    {y.length}
+                    <br></br>
+                    <br />
                     {/* Signifikansniveau########################################################################################################################################################################################## */}
                     <Row>
                       <Col>
@@ -921,7 +907,6 @@ export default function Middel() {
                       </Col>
                       <Col></Col>
                     </Row>
-
                     <Row>
                       {/*  test middel knap########################################################################################################################################################################################################################### */}
                       <Col>
@@ -990,7 +975,6 @@ export default function Middel() {
                     </Row>
                     <Row></Row>
                     <hr></hr>
-
                     {/* Punktestimat########################################################################################################################################################################################## */}
                     <Row>
                       <Col class="col-6">
@@ -1653,25 +1637,25 @@ export default function Middel() {
                                                           Hvor{' '}
                                                           {`$t_{1-\\frac{\\alpha}{2},n-1}=t_{1-\\frac{${significancelevel}}{2},${b}-1}=t_{1-${
                                                             significancelevel / 2
-                                                          } ${b-1}}=t_{${1 - significancelevel / 2}, ${b-1}}=$`}{' '}
+                                                          } ${b - 1}}=t_{${1 - significancelevel / 2}, ${
+                                                            b - 1
+                                                          }}=$`}{' '}
                                                           {numberFormat4(q2)} er {100 * (1 - significancelevel / 2)}%
-                                                          fraktilen for t-fordelingen med n-1 = {b-1} frihedsgrader.<br></br>
-                                                          Hvor 
-                                                          
-                                                          {
-                                                            `$ \\frac{\\hat{\\sigma}}{\\sqrt{n}} \\approx \\frac{${std}}{\\sqrt{${b}}} $`
-                                                          }
-                                                         {' '}er standardfejlen for middelværdien ofte kaldet SE eller SEM.
+                                                          fraktilen for t-fordelingen med n-1 = {b - 1} frihedsgrader.
+                                                          <br></br>
+                                                          Hvor
+                                                          {`$ \\frac{\\hat{\\sigma}}{\\sqrt{n}} \\approx \\frac{${std}}{\\sqrt{${b}}} $`}{' '}
+                                                          er standardfejlen for middelværdien ofte kaldet SE eller SEM.
                                                         </span>
                                                         <span>{`$$ ${numberFormat4(a)} \\pm ${numberFormat4(
                                                           q2
                                                         )} \\cdot \\frac{${std}}{\\sqrt{${b}}} \\approx $$`}</span>
                                                         <span>{`$$[ ${numberFormat4(lower)};${numberFormat4(
-                                                          upper 
+                                                          upper
                                                         )}]$$`}</span>
                                                         Vi kan med {(1 - significancelevel) * 100}% sandsynlighed sige
                                                         at middelværdien i populationen ligger mellem{' '}
-                                                        {numberFormat4(lower)} og {numberFormat4(upper )}
+                                                        {numberFormat4(lower)} og {numberFormat4(upper)}
                                                         <hr></hr>
                                                         Fejlmarginen er den halve længde af konfidensintervallet dvs.
                                                         øvre minus nedre grænse for konfidensintervallet divideret med
@@ -1679,28 +1663,26 @@ export default function Middel() {
                                                         <span>
                                                           {`$$ \\frac{${numberFormat4(upper)}-${numberFormat4(
                                                             lower
-                                                          )}}{2}\\approx${numberFormat4(
-                                                            ((upper - lower) / 2) 
-                                                          )} $$`}
+                                                          )}}{2}\\approx${numberFormat4((upper - lower) / 2)} $$`}
                                                         </span>
-                                                        
                                                         <hr></hr>
                                                         Hvis vi ikke kan afvise nulhypotesen, betyder det at den sande
                                                         populations parameter {`$\\mu=\\mu_{0}$`}. Så gælder fra CLT, at
                                                         stikprøvefordelingen er normalfordelt med middelværdi{' '}
-                                                        {`$\\mu=\\mu_{0}$`}. Hvor{' '}
-                                                        {`$\\mu_{0}=${c}$`} er den middelværdi vi tester under
-                                                        nulhypotesen {`$H_{0}$`}.<br></br>
-                                                       
+                                                        {`$\\mu=\\mu_{0}$`}. Hvor {`$\\mu_{0}=${c}$`} er den middelværdi
+                                                        vi tester under nulhypotesen {`$H_{0}$`}.<br></br>
                                                         t-teststørrelsen angiver forskellen mellem {`$\\hat{\\mu}$`} og{' '}
-                                                        {`$\\mu_{0}$`}, divideret med SEM standardfejlen for middelværdien   <span>{
-                                                            `$ \\frac{\\hat{\\sigma}}{\\sqrt{n}} = \\frac{${std}}{\\sqrt{${b}}} \\approx {${numberFormat4(stdev)}} $`
-                                                          }</span>:
+                                                        {`$\\mu_{0}$`}, divideret med SEM standardfejlen for
+                                                        middelværdien{' '}
+                                                        <span>{`$ \\frac{\\hat{\\sigma}}{\\sqrt{n}} = \\frac{${std}}{\\sqrt{${b}}} \\approx {${numberFormat4(
+                                                          stdev
+                                                        )}} $`}</span>
+                                                        :
                                                         <span>{`$$t-teststørrelsen = \\frac{\\hat{\\mu}-\\mu_{0}}{SEM} \\approx \\frac{${numberFormat4(
                                                           a
-                                                        )}-${c }}{${numberFormat4(
-                                                          stdev
-                                                        )}} \\approx ${numberFormat4((a-c)/stdev)} $$`}</span>
+                                                        )}-${c}}{${numberFormat4(stdev)}} \\approx ${numberFormat4(
+                                                          (a - c) / stdev
+                                                        )} $$`}</span>
                                                       </MathJax>
                                                     </div>
                                                   </div>
@@ -1727,7 +1709,6 @@ export default function Middel() {
                     </Row>
                     {/* Fejlmargin########################################################################################################################################################################################## */}
                     {/* Fejlmargin */}
-
                     <Row>
                       <Col class="col-6">
                         <Button variant={colordummy7} size="sm" onClick={() => setShow7(!show7)}>
@@ -1784,17 +1765,15 @@ export default function Middel() {
                                     {+d < +fejlmargin && (
                                       <span>
                                         <br></br>Da den nuværende fejlmargin på {numberFormat4(fejlmargin)} er større
-                                        end {d}
-                                        , skal man have en stikprøve størrelse på mindst {Math.ceil(minsample)} for at
-                                        opnå fejlmarginen på kun {d}.
+                                        end {d}, skal man have en stikprøve størrelse på mindst {Math.ceil(minsample)}{' '}
+                                        for at opnå fejlmarginen på kun {d}.
                                       </span>
                                     )}
                                     {+fejlmargin < +d && (
                                       <span>
                                         <br></br>Da den nuværende fejlmargin på {numberFormat4(fejlmargin)} er mindre
-                                        end {d}
-                                        , kunne man have begrænset stikprøve størrelsen til {Math.ceil(minsample)} for
-                                        at opnå fejlmarginen på {d}.
+                                        end {d}, kunne man have begrænset stikprøve størrelsen til{' '}
+                                        {Math.ceil(minsample)} for at opnå fejlmarginen på {d}.
                                       </span>
                                     )}
                                   </p>
@@ -1819,7 +1798,6 @@ export default function Middel() {
                         </div>
                       </Col>
                     </Row>
-
                     <Row>
                       {fpctext === 'Fjern kendt endelig populationsstørrelse' && (
                         <div>

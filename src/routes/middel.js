@@ -51,7 +51,10 @@ const hotSettings = {
   copyPaste: true,
   contextMenu: true,
   colHeaders: ['Værdier'],
+  // colWidths: 400,
   // width: '100%',
+  stretchH: 'all',
+  width: 'auto',
   height: 220,
   // rowHeights: 23,
   rowHeaders: true,
@@ -747,19 +750,27 @@ export default function Middel() {
                     <br></br>
                     {showraw && (
                       <>
-                        <HotTable
-                          ref={hotTableComponent}
-                          settings={hotSettings}
-                          afterChange={afterUpdateCell}
-                          afterLoadData={afterDataLoaded}
-                        />
-                        Test Beregninger baseret på ovenstående skema
-                        <br />
-                        calcQuant[4]: {calcQuant[4]}
-                        <br />
-                        skewness(calcQuant[4]):{skewness(calcQuant[4])}
-                        <br />
-                        <br />
+                        <Row>
+                          <Col class="col-6">
+                            <HotTable
+                              ref={hotTableComponent}
+                              settings={hotSettings}
+                              afterChange={afterUpdateCell}
+                              afterLoadData={afterDataLoaded}
+                            />
+                            <br></br>
+                          </Col>
+
+                          <Col class="col-6">
+                            Test Beregninger baseret på ovenstående skema
+                            <br />
+                            calcQuant[4]: {calcQuant[4]}
+                            <br />
+                            skewness(calcQuant[4]):{skewness(calcQuant[4])}
+                            <br />
+                            <br />
+                          </Col>
+                        </Row>
                       </>
                     )}
                     {/* Signifikansniveau########################################################################################################################################################################################## */}

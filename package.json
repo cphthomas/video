@@ -13,6 +13,7 @@
     "@stdlib/stats-base-dists-chisquare-cdf": "^0.0.6",
     "@stdlib/stats-base-dists-normal-cdf": "^0.0.6",
     "@stdlib/stats-base-dists-normal-quantile": "^0.0.6",
+    "@stdlib/stats-base-dists-normal-skewness": "^0.0.8",
     "@stdlib/stats-base-dists-t-quantile": "^0.0.6",
     "@stdlib/stats-vartest": "^0.0.7",
     "@stdlib/stdlib": "^0.0.96",

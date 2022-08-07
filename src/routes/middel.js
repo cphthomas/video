@@ -5,7 +5,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { HotTable } from '@handsontable/react';
 import 'handsontable/dist/handsontable.full.css';
 import 'handsontable/dist/handsontable.min.css';
-import { mean } from 'mathjs';
+import { mean, sqrt, variance, quantileSeq } from 'mathjs';
 // import Toggle from './ToggleRenderProps';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import { Tooltip, OverlayTrigger } from 'react-bootstrap';
@@ -38,8 +38,9 @@ var pdft = require('@stdlib/stats/base/dists/t/pdf');
 var quantilet = require('@stdlib/stats/base/dists/t/quantile');
 var cdfchi = require('@stdlib/stats-base-dists-chisquare-cdf');
 var quantilechi = require('@stdlib/stats/base/dists/chisquare/quantile');
+var skewness = require('@stdlib/stats-base-dists-normal-skewness');
 
-const handsOnData = [[4], [8], [10], [2], [2], [2], [2]];
+const handsOnData = [[12], [12], [12], [10], [8], [8], [8]];
 
 const hotSettings = {
   data: handsOnData,
@@ -51,7 +52,7 @@ const hotSettings = {
   contextMenu: true,
   colHeaders: ['Værdier'],
   // width: '100%',
-  height: 320,
+  height: 220,
   // rowHeights: 23,
   rowHeaders: true,
 
@@ -104,38 +105,29 @@ export default function Middel() {
 
   const calculateQuant = (y) => {
     try {
-      // let z = [];
-      // for (let i = 0; i < allData.length; i++) {
-      //   let innerArr = [];
-      //   innerArr.push(1);
-      //   for (let j = 1; j < allData[0].length; j++) {
-      //     innerArr.push(allData[i][j]);
-      //   }
-      //   z.push(innerArr);
-      // }
-      //Transpose of xMatrix
-      // const transposeXMatrix = transpose(z);
-      // X transpose * X
-      // const xTOfx = multiply(transposeXMatrix, z);
-      // X transpose * Y
-      // const xTOfy = multiply(transposeXMatrix, y);
-      // X transpose * X inverse
-      // const xTOfxInverse = inv(xTOfx);
       const middel = mean(y);
       const antal = y.length;
-      // const standardafv
-      setCalcQuant([middel, antal]);
+      const standardafvigelse = sqrt(variance(y));
+      const kvantil = quantileSeq(y, g / 100);
+      const hottabledata = y;
+
+      setCalcQuant([middel, antal, standardafvigelse, kvantil, hottabledata]);
     } catch (e) {
       console.error('Error:' + e);
-      alert('Something went wrong, please check your data again');
+      alert('Der er noget galt, tjek venligst rådata');
     }
   };
-
+  var [g, setg] = useState(+(50).toFixed(2)); //fraktiler
+  var [showraw, setShowraw] = useState(false);
+  var colordummyraw = showraw ? 'info' : 'warning';
   var [a, seta] = useState(+(10).toFixed(2)); //middelværdi
-  var [b, setb] = useState(+(50).toFixed(2)); //stikprøvestørrelse
+  if (showraw) a = calcQuant[0];
+  var [b, setb] = useState(+50); //stikprøvestørrelse
+  if (showraw) b = calcQuant[1];
   var [c, setc] = useState(+(10.5).toFixed(2)); //test middel
   var [e, sete] = useState(+(2.2).toFixed(2)); //test standardafvigelse
   var [std, setstd] = useState(+(2).toFixed(2)); //standardafvigelse
+  if (showraw) std = calcQuant[2];
   var [f, setf] = useState(+(b * 10).toFixed(2)); //
   var [sig, setsig] = useState(['5% signifikansniveau']);
   var sigSelect = (e) => {
@@ -157,6 +149,8 @@ export default function Middel() {
   var colordummy7 = show7 ? 'danger' : 'primary';
   var [show8, setShow8] = useState(false);
   var colordummy8 = show8 ? 'danger' : 'primary';
+  var [show9, setShow9] = useState(false);
+  var colordummy9 = show9 ? 'danger' : 'primary';
 
   var significancelevel = 0.05;
   if (sig === '5% signifikansniveau') {
@@ -721,7 +715,7 @@ export default function Middel() {
                 <div class="p-3 mb-2 bg-white">
                   <Form>
                     <span class="lead text-muted">
-                      1 Kvantitativ stikprøve{' '}
+                      IKKE FÆRDIG 1 Kvantitativ stikprøve{' '}
                       <OverlayTrigger
                         placement="auto"
                         overlay={
@@ -742,21 +736,32 @@ export default function Middel() {
                     <p class="lead text-muted">
                       Analyse af en kvantitativ variabel, tests af middel og standardafvigelse<br></br>
                     </p>
-                    <HotTable
-                      ref={hotTableComponent}
-                      settings={hotSettings}
-                      afterChange={afterUpdateCell}
-                      afterLoadData={afterDataLoaded}
-                    />
-                    <br />
-                    Beregninger baseret på ovenstående skema<br></br>
-                    middel calcQuant[0] = {calcQuant[0]}
+                    <Row>
+                      <Col class="col-6">
+                        <Button variant={colordummyraw} size="sm" onClick={() => setShowraw(!showraw)}>
+                          {showraw && 'Indsæt beregnede data'}
+                          {!showraw && 'Indsæt rådata'}
+                        </Button>
+                      </Col>
+                    </Row>
                     <br></br>
-                    antal calcQuant[1] = {calcQuant[1]}
-                    <br></br>
-                    {y.length}
-                    <br></br>
-                    <br />
+                    {showraw && (
+                      <>
+                        <HotTable
+                          ref={hotTableComponent}
+                          settings={hotSettings}
+                          afterChange={afterUpdateCell}
+                          afterLoadData={afterDataLoaded}
+                        />
+                        Test Beregninger baseret på ovenstående skema
+                        <br />
+                        calcQuant[4]: {calcQuant[4]}
+                        <br />
+                        skewness(calcQuant[4]):{skewness(calcQuant[4])}
+                        <br />
+                        <br />
+                      </>
+                    )}
                     {/* Signifikansniveau########################################################################################################################################################################################## */}
                     <Row>
                       <Col>
@@ -792,42 +797,44 @@ export default function Middel() {
                           <div class="alert alert-warning">
                             <strong>Bemærk!</strong> Stikprøven er mindre end 30 observationer, det er derfor en
                             forudsætning at stikprøven stammer fra en normalfordelt population, denne forudsætning kan
-                            undersøges med fx. et normalfraktildiagram. Da vi ikke har rådata i dette tilfælde er et
-                            forudsætningscheck ikke muligt.
+                            undersøges med fx. et normalfraktildiagram.{' '}
+                            {!showraw && 'Da vi ikke har rådata i dette tilfælde er et forudsætningscheck ikke muligt.'}
                           </div>
                         )}
                       </Col>
                     </Row>
                     {/* Stikprøvegennemsnittet og størrelsen########################################################################################################################################################################################################################### */}
-                    <Row>
-                      <Col>
-                        <Form.Text className="text-muted">Stikprøve-gennemsnittet</Form.Text>
-                        <InputGroup size="sm">
-                          <OverlayTrigger
-                            placement="auto"
-                            delay={{
-                              show: 100,
-                              hide: 100,
-                            }}
-                            overlay={
-                              <Tooltip>
-                                Gennemsnittet {a}, findes ved at lægge alle observationer sammen og dividere med
-                                antallet af observationer {b}.
-                              </Tooltip>
-                            }
-                          >
-                            <FormControl
-                              type="number"
-                              // max="-0.000000001"
-                              step={1}
-                              precision={0}
-                              //mobile={true}
-                              value={+a}
-                              onChange={(e) => seta(e.target.value)}
-                              placeholder="0"
-                            />
-                          </OverlayTrigger>
-                          {/* <InputGroup.Append>
+                    {!showraw && (
+                      <>
+                        <Row>
+                          <Col>
+                            <Form.Text className="text-muted">Stikprøve-gennemsnittet</Form.Text>
+                            <InputGroup size="sm">
+                              <OverlayTrigger
+                                placement="auto"
+                                delay={{
+                                  show: 100,
+                                  hide: 100,
+                                }}
+                                overlay={
+                                  <Tooltip>
+                                    Gennemsnittet {a}, findes ved at lægge alle observationer sammen og dividere med
+                                    antallet af observationer {b}.
+                                  </Tooltip>
+                                }
+                              >
+                                <FormControl
+                                  type="number"
+                                  // max="-0.000000001"
+                                  step={1}
+                                  precision={0}
+                                  //mobile={true}
+                                  value={+a}
+                                  onChange={(e) => seta(e.target.value)}
+                                  placeholder="0"
+                                />
+                              </OverlayTrigger>
+                              {/* <InputGroup.Append>
 													<InputGroup.Text
 														inputGroup-sizing-sm
 														id="basic-addon2"
@@ -835,78 +842,81 @@ export default function Middel() {
 														Successer
 													</InputGroup.Text>
 												</InputGroup.Append> */}
-                        </InputGroup>
-                      </Col>
-                      <br></br>
-                      <Col>
-                        <Form.Text className="text-muted">Stikprøvestørrelsen</Form.Text>
-                        <InputGroup size="sm">
-                          <OverlayTrigger
-                            placement="auto"
-                            delay={{
-                              show: 100,
-                              hide: 100,
-                            }}
-                            overlay={
-                              <Tooltip>
-                                <MathJax>
-                                  Stikprøvestørrelsen <span>{`$n$`}</span> er antallet af observationer i stikprøven.
-                                </MathJax>
-                              </Tooltip>
-                            }
-                          >
-                            <FormControl
-                              type="number"
-                              // max="-0.000000001"
-                              step={1}
-                              precision={0}
-                              //mobile={true}
-                              value={+b}
-                              onChange={(e) => setb(e.target.value)}
-                              placeholder="0"
-                            />
-                          </OverlayTrigger>
-                        </InputGroup>
-                      </Col>
-                    </Row>
-                    {/*  stikprøvestd########################################################################################################################################################################################################################### */}
-                    <Row>
-                      <br></br>
-                      <Col>
-                        <Form.Text className="text-muted">Standardafvigelsen</Form.Text>
-                        <InputGroup size="sm">
-                          <OverlayTrigger
-                            placement="auto"
-                            delay={{
-                              show: 100,
-                              hide: 100,
-                            }}
-                            overlay={
-                              <Tooltip>
-                                Standardafvigelsen for stikprøven er her {std}, dette er et mål for variationen.
-                                Populært kan vi sige at standardafvigelsen er den typiske afvigelse fra gennemsnittet.
-                                Vi kender ikke den sande standardafvigelse &sigma; for populationen, men
-                                standardafvigelsen for stikprøven er vort bedste bud på standardafvigelsen i
-                                populationen. Standardafvigelsen findes som kvadratroden af summen af de kvadrerede
-                                afvigelser divideret med antallet af observationer {b}.
-                              </Tooltip>
-                            }
-                          >
-                            <FormControl
-                              type="number"
-                              // max="-0.000000001"
-                              step={1}
-                              precision={0}
-                              //mobile={true}
-                              value={+std}
-                              onChange={(e) => setstd(e.target.value)}
-                              placeholder="0"
-                            />
-                          </OverlayTrigger>
-                        </InputGroup>
-                      </Col>
-                      <Col></Col>
-                    </Row>
+                            </InputGroup>
+                          </Col>
+                          <br></br>
+                          <Col>
+                            <Form.Text className="text-muted">Stikprøvestørrelsen</Form.Text>
+                            <InputGroup size="sm">
+                              <OverlayTrigger
+                                placement="auto"
+                                delay={{
+                                  show: 100,
+                                  hide: 100,
+                                }}
+                                overlay={
+                                  <Tooltip>
+                                    <MathJax>
+                                      Stikprøvestørrelsen <span>{`$n$`}</span> er antallet af observationer i
+                                      stikprøven.
+                                    </MathJax>
+                                  </Tooltip>
+                                }
+                              >
+                                <FormControl
+                                  type="number"
+                                  // max="-0.000000001"
+                                  step={1}
+                                  precision={0}
+                                  //mobile={true}
+                                  value={+b}
+                                  onChange={(e) => setb(e.target.value)}
+                                  placeholder="0"
+                                />
+                              </OverlayTrigger>
+                            </InputGroup>
+                          </Col>
+                        </Row>
+                        {/*  stikprøvestd########################################################################################################################################################################################################################### */}
+                        <Row>
+                          <br></br>
+                          <Col>
+                            <Form.Text className="text-muted">Standardafvigelsen</Form.Text>
+                            <InputGroup size="sm">
+                              <OverlayTrigger
+                                placement="auto"
+                                delay={{
+                                  show: 100,
+                                  hide: 100,
+                                }}
+                                overlay={
+                                  <Tooltip>
+                                    Standardafvigelsen for stikprøven er her {std}, dette er et mål for variationen.
+                                    Populært kan vi sige at standardafvigelsen er den typiske afvigelse fra
+                                    gennemsnittet. Vi kender ikke den sande standardafvigelse &sigma; for populationen,
+                                    men standardafvigelsen for stikprøven er vort bedste bud på standardafvigelsen i
+                                    populationen. Standardafvigelsen findes som kvadratroden af summen af de kvadrerede
+                                    afvigelser divideret med antallet af observationer {b}.
+                                  </Tooltip>
+                                }
+                              >
+                                <FormControl
+                                  type="number"
+                                  // max="-0.000000001"
+                                  step={1}
+                                  precision={0}
+                                  //mobile={true}
+                                  value={+std}
+                                  onChange={(e) => setstd(e.target.value)}
+                                  placeholder="0"
+                                />
+                              </OverlayTrigger>
+                            </InputGroup>
+                          </Col>
+                          <Col></Col>
+                        </Row>
+                      </>
+                    )}
                     <Row>
                       {/*  test middel knap########################################################################################################################################################################################################################### */}
                       <Col>
@@ -973,7 +983,6 @@ export default function Middel() {
                         </InputGroup>
                       </Col>
                     </Row>
-                    <Row></Row>
                     <hr></hr>
                     {/* Punktestimat########################################################################################################################################################################################## */}
                     <Row>
@@ -1040,6 +1049,215 @@ export default function Middel() {
                         </div>
                       </Col>
                     </Row>
+                    {/* Fraktiler######################################################################################################################################################### */}
+                    {showraw && (
+                      <Row>
+                        <Col class="col-6">
+                          <Button variant={colordummy9} size="sm" onClick={() => setShow9(!show9)}>
+                            {show9 && 'Skjul Fraktiler'}
+                            {!show9 && 'Fraktiler'}
+                          </Button>
+                          <div>
+                            {show9 && (
+                              <div>
+                                <div>
+                                  <br></br>
+                                  <div class="card">
+                                    <div class="card-body">
+                                      <div></div>
+                                      <p class="card-text">
+                                        <Row>
+                                          {/*  test middel knap########################################################################################################################################################################################################################### */}
+                                          <Col>
+                                            <Form.Text className="text-muted">Angiv fraktilen i %</Form.Text>
+                                            <InputGroup size="sm">
+                                              <OverlayTrigger
+                                                placement="top"
+                                                delay={{
+                                                  show: 100,
+                                                  hide: 100,
+                                                }}
+                                                overlay={
+                                                  <Tooltip>
+                                                    {g >= 0 && g <= 100 ? (
+                                                      <>
+                                                        {+numberFormat4(g)} %'s fraktilen er{' '}
+                                                        {+numberFormat4(quantileSeq(calcQuant[4], g / 100))}
+                                                      </>
+                                                    ) : (
+                                                      'Bemærk værdien skal være mellem 0% og 100%'
+                                                    )}
+                                                  </Tooltip>
+                                                }
+                                              >
+                                                <FormControl
+                                                  type="number"
+                                                  min="0.00000000"
+                                                  max="100"
+                                                  step={1}
+                                                  precision={0}
+                                                  //mobile={true}
+                                                  value={+g}
+                                                  onChange={(e) => setg(e.target.value)}
+                                                  placeholder="0"
+                                                />
+                                              </OverlayTrigger>
+                                            </InputGroup>
+                                          </Col>
+                                          {/*  test standardafvigelsen knap########################################################################################################################################################################################################################### */}
+                                          <Col></Col>
+                                        </Row>
+                                        <hr></hr>
+                                        Fraktiler benyttes til at opdele det ordnede datasæt, for at skabe overblik over
+                                        fordelingen af data.<br></br>
+                                        <br></br>
+                                        {g >= 0 && g <= 100 ? (
+                                          <>
+                                            <table class="table table-bordered">
+                                              <thead className="text-muted">
+                                                <tr>
+                                                  <th scope="col">Fraktil</th>
+                                                  <th scope="col">Værdi</th>
+                                                  <th scope="col">Forklaring</th>
+                                                </tr>
+                                              </thead>
+                                              <tbody className="text-muted">
+                                                <tr>
+                                                  <th scope="row"> {numberFormat4(g)}%</th>
+                                                  <td>{numberFormat4(quantileSeq(calcQuant[4], g / 100))}</td>
+                                                  <td>
+                                                    {numberFormat4(g)}%'s fraktilen også kaldet {numberFormat4(g / 100)}{' '}
+                                                    fraktilen er {numberFormat4(quantileSeq(calcQuant[4], g / 100))}.
+                                                    <br></br>Det betyder {numberFormat4(g)}% af observationerne er
+                                                    mindre end {numberFormat4(quantileSeq(calcQuant[4], g / 100))} eller
+                                                    at {numberFormat4(100 - g)}% af observationerne er større end{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], g / 100))} .
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                  <th scope="row">0%</th>
+                                                  <td>{numberFormat4(quantileSeq(calcQuant[4], 0 / 100))}</td>
+                                                  <td>
+                                                    0%'s fraktilen er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 0 / 100))}. 0%'s fraktilen
+                                                    er den mindste observation.
+                                                    <br></br>Det betyder 0% af observationerne er mindre end{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 0 / 100))} eller at{' '}
+                                                    {numberFormat4(100 - 0)}% af observationerne mindst er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 0 / 100))}.
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                  <th scope="row">10%</th>
+                                                  <td>{numberFormat4(quantileSeq(calcQuant[4], 10 / 100))}</td>
+                                                  <td>
+                                                    10%'s fraktilen er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 10 / 100))}, 10%'s
+                                                    fraktilen kaldes også 1. decil.
+                                                    <br></br>Det betyder 10% af observationerne højst er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 10 / 100))} eller at{' '}
+                                                    {numberFormat4(100 - 10)}% af observationerne mindst er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 10 / 100))}.
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                  <th scope="row">20%</th>
+                                                  <td>{numberFormat4(quantileSeq(calcQuant[4], 20 / 100))}</td>
+                                                  <td>
+                                                    20%'s fraktilen er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 20 / 100))}, 20%'s
+                                                    fraktilen kaldes også 2. decil.
+                                                    <br></br>Det betyder 20% af observationerne højst er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 20 / 100))} eller at{' '}
+                                                    {numberFormat4(100 - 20)}% af observationerne mindst er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 20 / 100))}.
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                  <th scope="row">25%</th>
+                                                  <td>{numberFormat4(quantileSeq(calcQuant[4], 25 / 100))}</td>
+                                                  <td>
+                                                    25%'s fraktilen er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 20 / 100))}, 25%'s
+                                                    fraktilen kaldes også 1 kvartil.
+                                                    <br></br>Det betyder 25% af observationerne højst er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 25 / 100))} eller at{' '}
+                                                    {numberFormat4(100 - 25)}% af observationerne mindst er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 25 / 100))}.
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                  <th scope="row">50%</th>
+                                                  <td>{numberFormat4(quantileSeq(calcQuant[4], 50 / 100))}</td>
+                                                  <td>
+                                                    50%'s fraktilen er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 50 / 100))}, 50%'s
+                                                    fraktilen kaldes også medianen.
+                                                    <br></br>Det betyder 50% af observationerne højst er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 50 / 100))} eller at{' '}
+                                                    {numberFormat4(100 - 50)}% af observationerne mindst er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 50 / 100))}.
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                  <th scope="row">75%</th>
+                                                  <td>{numberFormat4(quantileSeq(calcQuant[4], 75 / 100))}</td>
+                                                  <td>
+                                                    75%'s fraktilen er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 75 / 100))}, 75%'s
+                                                    fraktilen kaldes også 1 kvartil.
+                                                    <br></br>Det betyder 75% af observationerne højst er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 75 / 100))} eller at{' '}
+                                                    {numberFormat4(100 - 75)}% af observationerne mindst er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 75 / 100))}.
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                  <th scope="row">90%</th>
+                                                  <td>{numberFormat4(quantileSeq(calcQuant[4], 90 / 100))}</td>
+                                                  <td>
+                                                    90%'s fraktilen er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 90 / 100))}, 90%'s
+                                                    fraktilen kaldes også 9. decil.
+                                                    <br></br>Det betyder 90% af observationerne højst er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 90 / 100))} eller at{' '}
+                                                    {numberFormat4(100 - 90)}% af observationerne mindst er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 90 / 100))}.
+                                                  </td>
+                                                </tr>
+                                                <tr>
+                                                  <th scope="row">100%</th>
+                                                  <td>{numberFormat4(quantileSeq(calcQuant[4], 100 / 100))}</td>
+                                                  <td>
+                                                    {numberFormat4(100)}%'s fraktilen også kaldet{' '}
+                                                    {numberFormat4(100 / 100)} fraktilen er{' '}
+                                                    {numberFormat4(quantileSeq(calcQuant[4], 100 / 100))}.<br></br>Det
+                                                    betyder {numberFormat4(100)}% af observationerne højst er{' '}
+                                                    {quantileSeq(calcQuant[4], 100 / 100)} eller at{' '}
+                                                    {numberFormat4(100 - 100)}% af observationerne er større end{' '}
+                                                    {quantileSeq(calcQuant[4], 100 / 100)}.
+                                                  </td>
+                                                </tr>
+                                              </tbody>
+                                            </table>
+                                          </>
+                                        ) : (
+                                          <div class="alert alert-warning">
+                                            <strong>Bemærk!</strong> Fraktilen kan kun antage værdier mellem 0% og 100%,
+                                            ret input i feltet ovenfor.
+                                          </div>
+                                        )}
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <br></br>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        </Col>
+                      </Row>
+                    )}
                     {/* Konfidensinterval########################################################################################################################################################################################## */}
                     <Row>
                       <Col class="col-6">
@@ -1754,6 +1972,7 @@ export default function Middel() {
                                       <InputGroup.Text id="basic-addon2">%</InputGroup.Text>
                                     </InputGroup.Append> */}
                                     </InputGroup>
+
                                     <hr></hr>
                                   </div>
                                   <p class="card-text">

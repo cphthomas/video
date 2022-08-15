@@ -22,6 +22,8 @@
     "@testing-library/user-event": "^13.5.0",
     "better-react-mathjax": "^2.0.1",
     "bootstrap": "^4.6.1",
+    "compute-kurtosis": "^1.0.0",
+    "compute-skewness": "^1.0.1",
     "handsontable": "^12.0.1",
     "highcharts": "^10.1.0",
     "highcharts-react-official": "^3.1.0",
@@ -36,6 +38,7 @@
     "react-dom": "^18.1.0",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
+    "regression": "^2.0.1",
     "styled-components": "^5.3.5",
     "web-vitals": "^2.1.4"
   },

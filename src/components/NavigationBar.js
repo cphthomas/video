@@ -46,12 +46,12 @@ export const NavigationBar = () => (
                 1 Variabel
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <Dropdown.Item size="sm" href="/mean" target="_blank">
+                <Dropdown.Item size="sm" href="/middel" target="_blank">
                   1 Kvantitativ variabel
                 </Dropdown.Item>
-                <Dropdown.Item size="sm" href="/middel" target="_blank">
+                {/* <Dropdown.Item size="sm" href="/middel" target="_blank">
                  middel
-                </Dropdown.Item>
+                </Dropdown.Item> */}
                 <Dropdown.Item size="sm" href="/andel" target="_blank">
                   1 Kvalitativ variabel
                 </Dropdown.Item>

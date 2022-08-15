@@ -70,7 +70,7 @@ const hotSettings = {
   // width: '100%',
   stretchH: 'all',
   width: 'auto',
-  height: 220,
+  height: 160,
   // rowHeights: 23,
   rowHeaders: true,
 
@@ -1070,7 +1070,8 @@ export default function Middel() {
                           <div class="alert alert-warning">
                             <strong>Bemærk!</strong> Stikprøven er mindre end 30 observationer, det er derfor en
                             forudsætning at stikprøven stammer fra en normalfordelt population, denne forudsætning kan
-                            undersøges med fx. et normalfraktildiagram.{' '}
+                            undersøges med fx. et normalfraktildiagram, klik på knappen datafordeling for at se
+                            normalfraktildiagram.{' '}
                             {!showraw && 'Da vi ikke har rådata i dette tilfælde er et forudsætningscheck ikke muligt.'}
                           </div>
                         )}

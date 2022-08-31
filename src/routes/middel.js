@@ -46,7 +46,7 @@ var quantilechi = require('@stdlib/stats/base/dists/chisquare/quantile');
 var skewness = require('compute-skewness');
 var kurtosis = require('compute-kurtosis');
 
-const handsOnData = [['Kopier rådata ind her']];
+const handsOnData = [['Indsæt med CMD+V (Mac) eller CTRL+V (Windows)']];
 // const qqdata0 = [
 //   [-1.4652337926855228, 8],
 //   [-0.7916386077433747, 10],

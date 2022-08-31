@@ -6,7 +6,7 @@ import Container from 'react-bootstrap/Container';
 import { Form, Row, Col } from 'react-bootstrap';
 // import InputGroup from 'react-bootstrap/InputGroup';
 import { MathJax, MathJaxContext } from 'better-react-mathjax';
-import { HotTable } from '@handsontable/react';
+import Spreadsheet from 'react-spreadsheet';
 import 'handsontable/dist/handsontable.full.css';
 import 'handsontable/dist/handsontable.min.css';
 import { std, min, max, median, quantileSeq, sum } from 'mathjs';
@@ -33,57 +33,15 @@ const numberFormat4 = (value) =>
     maximumFractionDigits: 4,
   }).format(value);
 
-const data2 = [
-  [1, 2, 2],
-  [2, 10, 11],
-  [3, 20, 11],
-  [4, 30, 15],
-  [5, 33, 15],
-  [6, 30, 15],
-  [7, 30, 15],
-  [8, 30, 15],
-  [9, 30, 15],
-  [10, 30, 15],
-];
-
-const hotSettings = {
-  data: data2,
-  colHeaders: true,
-  height: 'auto',
-  licenseKey: 'non-commercial-and-evaluation',
-  copyPaste: true,
-  contextMenu: true,
-  // colHeaders: ['ID1', 'Full name', 'Position'],
-  // contextMenu: ["copy", "cut", "paste"], => For copy/paste
-  // maxCols: 2, => For max limit of columns
-  // minCols: 1 => For min limit of columns
-  hiddenColumns: true,
-  language: 'en-US',
-  type: 'numeric',
-  numericFormat: { culture: 'de-DE', pattern: '0,0' },
-  allowInvalid: false,
-  allowEmpty: false,
+const App = () => {
+  const [data, setData] = useState([
+    [{ value: 'Vanilla' }, { value: 'Chocolate' }],
+    [{ value: 'Strawberry' }, { value: 'Cookies' }],
+  ]);
+  return <Spreadsheet data={data} onChange={setData} />;
 };
 
 export default function ToandeleTest() {
-  const hotTableComponent = useRef(null);
-  const [colarray, setcolarray] = useState([1.23, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-  // const [isContainText, setIsContainText] = useState(false);
-  const isContainText = false;
-  useEffect(() => {}, [hotTableComponent]);
-
-  const afterUpdateCell = (changes, source) => {
-    if (changes) {
-      // let totalSum = 0;
-      let allValuesOfCol = [];
-      changes.forEach(([row, col, oldValue, newValue]) => {
-        allValuesOfCol = hotTableComponent.current.hotInstance.getDataAtCol(col);
-      });
-
-      setcolarray(allValuesOfCol);
-    }
-  };
-
   return (
     <MathJaxContext hideUntilTypeset={'first'} config={config} version={3}>
       <main style={{ padding: '1rem 0' }}>
@@ -93,34 +51,7 @@ export default function ToandeleTest() {
               <Container>
                 <div class="p-3 mb-2 bg-white">
                   <Form>
-                    <div className="controls">
-                      <HotTable
-                        ref={hotTableComponent}
-                        settings={hotSettings}
-                        afterChange={afterUpdateCell}
-                        colHeaders={true}
-                        rowHeaders={true}
-                      />
-                      <hr></hr>
-                      {colarray}
-                      <br></br>
-                      Antal observationer length {colarray.length}
-                      <br></br>
-                      Mindste obs min {!isContainText && numberFormat4(min(...colarray))}
-                      <br></br>
-                      Største obs max {!isContainText && numberFormat4(max(...colarray))}
-                      <br></br>
-                      std from mathjs {!isContainText && numberFormat4(std(...colarray))}
-                      <br></br>
-                      median from mathjs {!isContainText && numberFormat4(median(...colarray))}
-                      <br></br>
-                      90% Quantile from mathjs {!isContainText && numberFormat4(quantileSeq(colarray, 0.9))}
-                      <br></br>
-                      Sum from mathjs {!isContainText && numberFormat4(sum(...colarray))}
-                      <br></br>
-                      Sum from mathjs {numberFormat4(sum(...colarray))}
-                      <br></br>
-                    </div>
+                    <div className="controls"></div>
                     <span class="lead text-muted"></span>
                     <h2>2 Andele</h2>
                     <Row>
@@ -134,10 +65,11 @@ export default function ToandeleTest() {
                                   <div></div>
                                   <p class="card-text">
                                     <MathJax dynamic>
+                                      <App />
                                       <hr></hr>
+                                      <App />
                                       Vores bedste gæt på, også kaldet estimat for, den sande middelværdi i populationen
-                                      er stikprøvegennemsnittet{' '}
-                                      <span>{`$\\bar{x}=${numberFormat4(sum(...colarray))}$`}</span>.
+                                      er stikprøvegennemsnittet.
                                     </MathJax>
                                   </p>
                                 </div>

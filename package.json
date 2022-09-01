@@ -31,6 +31,7 @@
     "mdbreact": "^5.2.0",
     "ml-regression-multivariate-linear": "^2.0.3",
     "norminv": "^2.0.0",
+    "numbro": "^2.3.6",
     "react": "^18.1.0",
     "react-bootstrap": "^2.4.0",
     "react-bootstrap-dropdown": "^0.3.0",
@@ -67,5 +68,17 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  }
+  },
+  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cphthomas/bi.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cphthomas/bi/issues"
+  },
+  "homepage": "/"
 }

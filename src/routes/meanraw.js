@@ -123,7 +123,10 @@ export default function Meanraw() {
   const afterUpdateCell = (changes, source) => {
     if (changes) {
       changes.forEach(([row, col, oldValue, newValue]) => {
-        const allValuesOfCol = hotTableComponent.current.hotInstance.getDataAtCol(col);
+        let allValuesOfCol = hotTableComponent.current.hotInstance.getDataAtCol(col);
+        allValuesOfCol = allValuesOfCol.map(function (val, i) {
+          return val === null ? 0 : val;
+        });
         let totalSum = 0;
         for (const cell of allValuesOfCol) {
           const convertedCell = cell.toLocaleString('en-US', {
@@ -132,7 +135,7 @@ export default function Meanraw() {
 
           totalSum += parseFloat(convertedCell.replace(',', '.').replace(' ', ''));
         }
-        if (isNaN(total)) {
+        if (isNaN(totalSum)) {
           alert('Non numeric values are pasted in column');
         } else {
           setTotal(totalSum);

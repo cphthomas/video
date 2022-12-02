@@ -33,9 +33,9 @@ const Styles = styled.div`
 export const NavigationBar = () => (
   <Styles>
     <Navbar expand="sm" bg="light" variant="light">
-      <Navbar.Brand href="https://www.tepedu.dk/">
+      {/* <Navbar.Brand href="https://www.tepedu.dk/">
         <Logo alt="" width="130" height="35" className="d-inline-block align-top" />
-      </Navbar.Brand>
+      </Navbar.Brand> */}
 
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
@@ -43,36 +43,22 @@ export const NavigationBar = () => (
           <Nav.Item>
             <Dropdown size="sm">
               <Dropdown.Toggle size="sm" variant="primary" id="dropdown-basic">
-                1 Variabel
+                Menu
               </Dropdown.Toggle>
               <Dropdown.Menu>
-                <Dropdown.Item size="sm" href="/middel" target="_blank">
-                  1 Kvantitativ variabel
+                <Dropdown.Item size="sm" href="/eksamensvideoer" target="_blank">
+                  Eksamensvideoer
                 </Dropdown.Item>
-                {/* <Dropdown.Item size="sm" href="/middel" target="_blank">
-                 middel
+                {/* <Dropdown.Item size="sm" href="/hypergeo" target="_blank">
+                  Podcasts
                 </Dropdown.Item> */}
-                <Dropdown.Item size="sm" href="/andel" target="_blank">
-                  1 Kvalitativ variabel
-                </Dropdown.Item>
-
-                <Dropdown.Divider />
-                <Dropdown.Item size="sm" href="/normal" target="_blank">
-                  Normalfordeling
-                </Dropdown.Item>
-                <Dropdown.Item size="sm" href="/binomial" target="_blank">
-                  Binomialfordeling
-                </Dropdown.Item>
-                <Dropdown.Item size="sm" href="/hypergeo" target="_blank">
-                  Hypergeometrisk fordeling
-                </Dropdown.Item>
-                <Dropdown.Item size="sm" href="/poisson" target="_blank">
-                  Poissonfordeling
+                <Dropdown.Item size="sm" href="https://audio.tepedu.dk/" target="_blank">
+                  Podcasts
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
           </Nav.Item>
-          <Nav.Item>
+          {/* <Nav.Item>
             <Dropdown size="sm">
               <Dropdown.Toggle size="sm" variant="primary" id="dropdown-basic">
                 Flere variable
@@ -99,7 +85,7 @@ export const NavigationBar = () => (
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-          </Nav.Item>
+          </Nav.Item> */}
         </Nav>
         {/* <Nav>
           <Nav.Link href="https://www.tepedu.dk/">Link 1 højre</Nav.Link>

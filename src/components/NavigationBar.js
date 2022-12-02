@@ -13,7 +13,7 @@ import {
   // Button,
 } from 'react-bootstrap';
 import styled from 'styled-components';
-import { ReactComponent as Logo } from './tepedu300.svg';
+// import { ReactComponent as Logo } from './tepedu300.svg';
 const Styles = styled.div`
   .navbar {
     background-color: lightgrey;

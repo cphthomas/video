@@ -59,7 +59,7 @@ export default function Binomial() {
                                       <p class="card-text">
                                         <MathJax dynamic>
                                           <hr></hr>
-                                          Vores bedste gæt på, også kaldet estimat for, den sande middelværdi i
+                                          CBS test Vores bedste gæt på, også kaldet estimat for, den sande middelværdi i
                                           populationen er stikprøvegennemsnittet{' '}
                                           <span>{`$\\bar{x}=${numberFormat4(a)}$`}</span>.
                                         </MathJax>

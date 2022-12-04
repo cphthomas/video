@@ -13,7 +13,7 @@ import Front from './routes/front';
 
 // import Normal from './routes/normal';
 import Eksamensvideoer from './routes/eksamensvideoer';
-import Hypergeo from './routes/hypergeo';
+import Test from './routes/test';
 // import Poisson from './routes/poisson';
 // import Chi2 from './routes/chi2';
 // import Anova from './routes/anova';
@@ -34,7 +34,7 @@ root.render(
         <Route path="mean" element={<Mean />}></Route>
         <Route path="normal" element={<Normal />}></Route> */}
         <Route path="eksamensvideoer" element={<Eksamensvideoer />}></Route>
-        <Route path="hypergeo" element={<Hypergeo />}></Route>
+        <Route path="test" element={<Test />}></Route>
         {/* <Route path="poisson" element={<Poisson />}></Route>
         <Route path="chi2" element={<Chi2 />}></Route>
         <Route path="anova" element={<Anova />}></Route>

@@ -90,7 +90,7 @@ export default function sdu() {
                 >
                   Flowplan for kurset
                 </Button>
-                <hr></hr>
+                {/* <hr></hr>
                 <Button
                   size="sm"
                   variant="info"
@@ -98,7 +98,7 @@ export default function sdu() {
                   target="_blank"
                 >
                   CBS BI Eksamen JMP Data
-                </Button>
+                </Button> */}
                 {/* <Button size="sm" variant="success" href="README.md">
                   README.md
                 </Button> */}

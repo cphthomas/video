@@ -12,7 +12,7 @@ import Front from './routes/front';
 // import Middel from './routes/middel';
 
 // import Normal from './routes/normal';
-import Eksamensvideoer from './routes/eksamensvideoer';
+import Sdu from './routes/sdu';
 import Smartlearninglivelearning from './routes/smartlearninglivelearning';
 
 import Test from './routes/test';
@@ -35,7 +35,7 @@ root.render(
         <Route path="lr" element={<Lr />}></Route>
         <Route path="mean" element={<Mean />}></Route>
         <Route path="normal" element={<Normal />}></Route> */}
-        <Route path="eksamensvideoer" element={<Eksamensvideoer />}></Route>
+        <Route path="sdu" element={<Sdu />}></Route>
         <Route path="smartlearninglivelearning" element={<Smartlearninglivelearning />}></Route>
 
         <Route path="test" element={<Test />}></Route>

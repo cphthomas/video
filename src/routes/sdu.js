@@ -34,7 +34,7 @@ import { Button } from 'react-bootstrap';
 //     maximumFractionDigits: 4,
 //   }).format(value);
 
-export default function eksamensvideoer() {
+export default function sdu() {
   return (
     <div>
       {' '}
@@ -43,8 +43,8 @@ export default function eksamensvideoer() {
           <div class="card">
             <div class="card-body">
               <div>
-                <h2>Live Learning videoplaylist</h2>
-                <h6>Videoer fra vore Live Learning møder Smartlearning Statistik</h6>
+                <h2>SDU videoplaylist</h2>
+                <h6>Videoer fra vore online møder på SDU fjernholdet</h6>
               </div>
             </div>
           </div>
@@ -73,22 +73,30 @@ export default function eksamensvideoer() {
           <div class="card">
             <div class="card-body">
               <div>
-                <h6>Materiale brugt i ovenstående videoplaylist.</h6>
+                <h6>Links til SDU statistik kurset.</h6>
+                <hr></hr>
                 <Button
                   size="sm"
-                  href="https://www.dropbox.com/s/urz2s0lr96etgte/BI%2C%20efter%C3%A5r%202022%2C%20ordin%C3%A6r_v3.pdf?dl=1"
+                  href="https://sdu.itslearning.com/ContentArea/ContentArea.aspx?LocationID=24676&LocationType=1"
+                  target="_blank"
                 >
-                  2022-25-10 CBS BI Eksamenopgave
+                  Link til SDU statistik kurset
                 </Button>
                 <Button
                   size="sm"
                   variant="success"
-                  href="https://www.dropbox.com/s/rfqf9t2ncvlklxu/Eksamen%20efter%C3%A5r%202022%2C%20ordin%C3%A6r%20-%20vejledende%20besv_v3.pdf?dl=1"
+                  href="https://docs.google.com/spreadsheets/d/1sacob7Q_hXShpHk9ggIn0E8JYhW-4Di6QZaQ0NwhQ3E/edit#gid=0"
+                  target="_blank"
                 >
-                  CBS BI Eksamen Løsningsforslag
+                  Flowplan for kurset
                 </Button>
-                {/* <hr></hr> */}
-                <Button size="sm" variant="info" href="https://www.dropbox.com/s/i3bw60lxmwd5unl/Fjernvarme.jmp?dl=1">
+                <hr></hr>
+                <Button
+                  size="sm"
+                  variant="info"
+                  href="https://www.dropbox.com/s/i3bw60lxmwd5unl/Fjernvarme.jmp?dl=1"
+                  target="_blank"
+                >
                   CBS BI Eksamen JMP Data
                 </Button>
                 {/* <Button size="sm" variant="success" href="README.md">

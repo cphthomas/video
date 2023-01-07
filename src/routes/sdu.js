@@ -58,7 +58,7 @@ export default function sdu() {
                 <iframe
                   title="Videoplaylist"
                   className="embed-responsive-item"
-                  src="https://vimeo.com/showcase/9475472/embed"
+                  src="https://vimeo.com/showcase/10098106/embed"
                   frameborder="0"
                   allow="autoplay; fullscreen"
                   allowfullscreen

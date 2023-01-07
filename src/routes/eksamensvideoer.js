@@ -43,11 +43,8 @@ export default function eksamensvideoer() {
           <div class="card">
             <div class="card-body">
               <div>
-                <h2>Videoplaylists Eksamen 2022 CBS BI</h2>
-                <h6>
-                  Eksamen, data samt løsningsforslag er udviklet af HD BI fagansvarlig Mads Stenbo Nielsen - Department
-                  of Finance - CBS
-                </h6>
+                <h2>Live Learning videoplaylist</h2>
+                <h6>Videoer fra vore Live Learning møder Smartlearning Statistik</h6>
               </div>
             </div>
           </div>
@@ -61,7 +58,7 @@ export default function eksamensvideoer() {
                 <iframe
                   title="Videoplaylist"
                   className="embed-responsive-item"
-                  src="https://vimeo.com/showcase/10024958/embed"
+                  src="https://vimeo.com/showcase/9475472/embed"
                   frameborder="0"
                   allow="autoplay; fullscreen"
                   allowfullscreen

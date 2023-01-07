@@ -13,6 +13,8 @@ import Front from './routes/front';
 
 // import Normal from './routes/normal';
 import Eksamensvideoer from './routes/eksamensvideoer';
+import Smartlearninglivelearning from './routes/smartlearninglivelearning';
+
 import Test from './routes/test';
 // import Poisson from './routes/poisson';
 // import Chi2 from './routes/chi2';
@@ -34,6 +36,8 @@ root.render(
         <Route path="mean" element={<Mean />}></Route>
         <Route path="normal" element={<Normal />}></Route> */}
         <Route path="eksamensvideoer" element={<Eksamensvideoer />}></Route>
+        <Route path="smartlearninglivelearning" element={<Smartlearninglivelearning />}></Route>
+
         <Route path="test" element={<Test />}></Route>
         {/* <Route path="poisson" element={<Poisson />}></Route>
         <Route path="chi2" element={<Chi2 />}></Route>

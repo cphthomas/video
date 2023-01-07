@@ -1,6 +1,6 @@
 import React from 'react';
 // import { Link } from "react-router-dom";
-import Dropdown from 'react-bootstrap/Dropdown';
+// import Dropdown from 'react-bootstrap/Dropdown';
 import {
   Nav,
   Navbar,
@@ -13,7 +13,7 @@ import {
   // Button,
 } from 'react-bootstrap';
 import styled from 'styled-components';
-// import { ReactComponent as Logo } from './tepedu300.svg';
+import { ReactComponent as Logo } from './tepedu300.svg';
 const Styles = styled.div`
   .navbar {
     background-color: lightgrey;
@@ -33,14 +33,14 @@ const Styles = styled.div`
 export const NavigationBar = () => (
   <Styles>
     <Navbar expand="sm" bg="light" variant="light">
-      {/* <Navbar.Brand href="https://www.tepedu.dk/">
+      <Navbar.Brand href="https://www.tepedu.dk/">
         <Logo alt="" width="130" height="35" className="d-inline-block align-top" />
-      </Navbar.Brand> */}
+      </Navbar.Brand>
 
       <Navbar.Toggle aria-controls="basic-navbar-nav" />
       <Navbar.Collapse id="basic-navbar-nav">
         <Nav className="mr-auto">
-          <Nav.Item>
+          {/* <Nav.Item>
             <Dropdown size="sm">
               <Dropdown.Toggle size="sm" variant="primary" id="dropdown-basic">
                 Menu
@@ -49,15 +49,15 @@ export const NavigationBar = () => (
                 <Dropdown.Item size="sm" href="/eksamensvideoer" target="_blank">
                   Eksamensvideoer
                 </Dropdown.Item>
-                {/* <Dropdown.Item size="sm" href="/hypergeo" target="_blank">
+                <Dropdown.Item size="sm" href="/hypergeo" target="_blank">
                   Podcasts
-                </Dropdown.Item> */}
+                </Dropdown.Item>
                 <Dropdown.Item size="sm" href="https://audio.tepedu.dk/" target="_blank">
                   Podcasts
                 </Dropdown.Item>
               </Dropdown.Menu>
             </Dropdown>
-          </Nav.Item>
+          </Nav.Item> */}
           {/* <Nav.Item>
             <Dropdown size="sm">
               <Dropdown.Toggle size="sm" variant="primary" id="dropdown-basic">

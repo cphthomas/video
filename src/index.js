@@ -13,6 +13,7 @@ import Front from './routes/front';
 
 // import Normal from './routes/normal';
 import Sdu from './routes/sdu';
+import Excel from './routes/excel';
 import Smartlearninglivelearning from './routes/smartlearninglivelearning';
 
 import Test from './routes/test';
@@ -36,6 +37,7 @@ root.render(
         <Route path="mean" element={<Mean />}></Route>
         <Route path="normal" element={<Normal />}></Route> */}
         <Route path="sdu" element={<Sdu />}></Route>
+        <Route path="excel" element={<Excel />}></Route>
         <Route path="smartlearninglivelearning" element={<Smartlearninglivelearning />}></Route>
 
         <Route path="test" element={<Test />}></Route>

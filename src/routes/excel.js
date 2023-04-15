@@ -4,7 +4,7 @@
 // import Dropdown from 'react-bootstrap/Dropdown';
 import Container from 'react-bootstrap/Container';
 // import { Form, Row, Col } from 'react-bootstrap';
-import { Button } from 'react-bootstrap';
+// import { Button } from 'react-bootstrap';
 // import InputGroup from 'react-bootstrap/InputGroup';
 // import { MathJax, MathJaxContext } from 'better-react-mathjax';
 // import { HotTable } from '@handsontable/react';

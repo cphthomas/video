@@ -16,6 +16,7 @@ import Sdu from './routes/sdu';
 import Excel from './routes/excel';
 import Smartlearninglivelearning from './routes/smartlearninglivelearning';
 import No4532showqw from './routes/no4532showqw';
+import Datalivelearning from './routes/datalivelearning';
 
 import Test from './routes/test';
 // import Poisson from './routes/poisson';
@@ -41,6 +42,7 @@ root.render(
         <Route path="excel" element={<Excel />}></Route>
         <Route path="no4532showqw" element={<No4532showqw />}></Route>
         <Route path="smartlearninglivelearning" element={<Smartlearninglivelearning />}></Route>
+        <Route path="datalivelearning" element={<Datalivelearning />}></Route>
 
         <Route path="test" element={<Test />}></Route>
         {/* <Route path="poisson" element={<Poisson />}></Route>
